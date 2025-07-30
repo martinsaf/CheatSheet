@@ -1,0 +1,24 @@
+# CAPTURE CONDITION PARAMETERS
+  # Purpose
+-> Define capture conditions for a singles run/loop. STOP after completing the condition. Also known as "Autostop"
+  - Duration: Sniff the traffic and stop after X seconds. Create a new file and write output to it.
+  tshark -w test.pcap -a duration:1
+
+  - Filesize: Define the maximum capture file size. Stop after reaching X file size (KB)
+  tshark -w test.pcap -a filesize:10
+
+  - Files: Define the maximum number of output files. Stop after X files.
+  tshark -w test.pcap -a filesize:10 -a files:3
+
+-> Ring buffer control options. Define capture conditions for multiple runs/loops. (INFINITE LOOP)
+  - Duration: Sniff the traffic for X seconds, create a new file and write output to it.
+  tshark -w test.pcap -b duration:1
+
+  - Filesize: Define the maximum capture file size. Create a new file and write output to it after reaching filesize X (KB)
+  tshark -w test.pcap -b filesize:10
+
+  - Files: Define the maximum number of output files. Rewrite the first/oldest file after creating X files.
+  tshark -w test.pcap -b filesize:10 -b files:3
+
+Star sniffing the traffic and stop after 2 seconds, and save the dump into 5 files, each 5kb.
+tshark -w autostop-demo.pcap -a duration:2 -a filesize:5 -a files:5
