@@ -1,0 +1,8 @@
+-> Capture Filters: Live filtering options. The purpose is to save only a specific part of the traffic. It is set before capturing traffic and is not changeable during live capture.
+-> Display Filters: Post-capture filtering options. The purpose is to investigate packets by reducing the number of visible packets, which is changeable during the investigation.
+
+The purpose is to implement a scope by range, protocol, and direction filtering.
+The display filters investigate the capture files in-depth without modifying the packet.
+
+Parameter: -f -> Capture the filters. Same as BPF syntax and Wireshark's capture filters.
+Parameter: -Y -> Display filters. Same as Wireshark's display filters.
