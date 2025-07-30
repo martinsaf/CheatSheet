@@ -1,4 +1,4 @@
-# CAPTURE CONDITION PARAMETERS
+### CAPTURE CONDITION PARAMETERS
   # Purpose
 -> Define capture conditions for a singles run/loop. STOP after completing the condition. Also known as "Autostop"
   - Duration: Sniff the traffic and stop after X seconds. Create a new file and write output to it.
