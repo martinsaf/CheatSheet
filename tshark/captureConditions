@@ -1,5 +1,5 @@
-### CAPTURE CONDITION PARAMETERS
-  # Purpose
+CAPTURE CONDITION PARAMETERS
+  Purpose
 -> Define capture conditions for a singles run/loop. STOP after completing the condition. Also known as "Autostop"
   - Duration: Sniff the traffic and stop after X seconds. Create a new file and write output to it.
   tshark -w test.pcap -a duration:1
