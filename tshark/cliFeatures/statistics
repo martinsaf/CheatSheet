@@ -1,0 +1,94 @@
+STATISTICS
+
+Paratemeter
+  --color
+    Wireshark-like colourised output.
+    tshark --color
+
+    tshark -r colour.pcap --color
+    
+  -z
+    Statistics
+    There are multiple options available under this parameter. You can view the available filters under this parameter with:
+      - tshark -z help
+    Sample usage
+      - tshark -z filter
+    Each time you filter the statistics, packets are shown first, then the statistics provided. You can suppress packets and focus on the statistics by using the -q parameter.
+
+PROTOCOL HIERARCHY
+  Helps analysts to see the protocols used, frame numbers, and size of packets in a tree view based on packet numbers.
+  As it provides a summary of the capture, it can help analysts decide the focus point for an event of interest.
+  Use the -z io,phs -q parameters to view the protocol hierarchy.
+
+  tshark -r demo.pcapng -z io,phs -q
+
+  After viewing the entire packet tree, you can focus on a specific protocol (udp).
+
+  tshark -r demo.pcapng -z io,phs,udp -q
+
+PACKET LENGTHS TREE
+  The packet lengths tree view helps analysts to overview the general distribution of packets by size in a tree view. It allows analysts to detect anomalously big and small packets at a glance!
+  Use the -z plen, tree -q parameters to view the packet lengths tree.
+
+  tshark -r demo.pcapng -z plen,tree -q
+
+ENDPOINTS
+  The endpoint statistics view helps to overview the unique endpoints. It also shows the number of packets associated with each endpoint. If you are familiar with Wireshark, you should know that endpoints can be viewed in multiple formats. Similar to Wireshark, TShark supports multiple source filtering options for endpoint identification. Use the -z endpoints, ip -q parameters to view IP endpoints.
+
+  Filter
+    eth
+      Ethernet addresses
+    ip
+      IPv4 addresses
+    ipv6
+      IPv6 addresses
+    tcp
+      TCP addresses
+      Valid for both IPv4 and IPv6
+    udp
+      UDP addresses
+      Valid for both IPv4 and IPv6
+    wlan
+      IEEE 802.11 addresses
+
+tshark -r demo.pcapng -z endpoints,ip -q
+
+COVERSATIONS
+  The conversations view helps analysts to overview the traffic flow between two particular connection points. Similar to endpoint filtering, conversations can be viewed in multiple formats. This filter uses the same parameters as the "Endpoints" option. Use the -z conv,ip -q parameters to view IP conversations.
+
+tshark -r demo.pcapng -z conv,ip -q
+
+EXPERT INFO
+  The expert info view helps analysts to view the automatic comments provided by Wireshark. Use the -z expert -q parameters to view the expert information.
+
+tshark -r demo.pcapng -z expert -q
+
+---------------------------------------------------------------------------------------------
+Statistics - Specific Filters for Particular Protocols
+IPv4 and IPv6
+  This option provides statistics on IPv4 and IPv6 packets. Having the protocol statistics helps analysts to overview packet distribution according to the protocol type. You can filter the available protocol types and view the details using the -z ptype,tree -q parameters.
+
+  tshark -r demo.pcapng -z ptype,tree -q
+
+  You can filter all IP addresses using the parameters given belown.
+    - IPv4: -z ip_hosts,tree -q
+    - IPv6: -z ipv6_hosts,tree -q
+
+  Destinations and ports:
+    tshark -r demo.pcapng -z dests,tree -q
+
+DNS
+  This option provides statistics on DNS packets by summarising the available info. You can filter the packets and view the details using the -z dns,tree -q parameters.
+
+  tshark -r demo.pcapng -z dns,tree -q
+
+HTTP
+  This option provides statistics on HTTP packets by summarising the load distribution, requests, packets, and status info. You can filter the packets and view the details using the parameters given below.
+    - Packet and status counter for HTTP: -z http,tree -q
+    - Packet and status counter for HTTP2: -z http2,tree -q
+    - Load distribution: -z http_srv,tree -q
+    - Requests: -z http_req,tree -q
+    - Requests and responses: -z http_seq,tree -q
+
+  tshark -r demo.pcapng -z http,tree -q
+
