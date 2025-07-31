@@ -31,4 +31,32 @@ Details and Available Options
   tshark -f "ip proto 1"
   https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 
+---------------------------------------------------------------------------------------------
 
+(Capture Filter Category - Host Filtering)
+Capturing traffic to or from a specific host.
+  - Traffic generation with cURL. This command sends a default HTTP query to a specified address
+    - curl tryhackme.com
+  - TShark capture filter for a host
+    - tshark -f "host tryhackme.com"
+
+(Capture Filter Category - IP Filtering)
+Capturing traffic to or from a specific port. We will use the Netcat tool to create noise on specific ports.
+  - Traffic generation with Netcat. Here Netcat is instructed to provide details (verbosity), and timeout is set to 5 seconds.
+    - nc 10.10.10.10 4444 -vw 5
+  - TShark capture filter for specific IP address
+    - tshark -f "host 10.10.10.10"
+
+(Capture Filter Category - Port Filtering)
+Capturing traffic to or from a specific port. We will use the Netcat tool to create noise on specific ports.
+  - Traffic generation with Netcat. Here Netcat is instructed to provide details (verbosity), and timeout is set to 5 seconds.
+    - nc 10.10.10.10 4444 -vw 5
+  - TShark capture filter for port 4444
+    - tshark -f "port 4444"
+
+(Capture Filter Category - Protocol Filtering)
+Capturing traffic to or from a specific protocol. We will use the Netcat tool to create noise on specific ports.
+  - Traffic generation with Netcat. Here Netcat is instructed to use UDP, provide details (verbosity), and timeout is set to 5 seconds.
+    - nc -u 10.10.10.10 4444 -vw 5
+  - TShark capture filter for
+    - tshark -f "udp"
