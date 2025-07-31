@@ -1,0 +1,36 @@
+DISPLAY FILTERS
+
+NOTE: Using single quotes for capture filters is recommended to avoid space and bash expasion problems.
+
+(Display Filter Category - Protocol: IP)
+  Details and Available Options
+    - Filtering an IP without specifying a direction.
+      - tshark -Y 'ip.addr == 10.10.10.10'
+    - Filtering a network range
+      - tshark -Y 'ip.addr == 10.10.10.0/24'
+    - Filtering a source IP
+      - tshark -Y 'ip.src == 10.10.10.10'
+    - Filtering a destination IP
+      - tshark -Y 'ip.dst == 10.10.10.10'
+
+(Display Filter Category - Protocol: TCP)
+    Details and Available Options
+      - Filtering TCP port
+        - tshark -Y 'tcp.port == 80'
+      - Filtering source TCP port
+        - tshark -Y 'tcp.srcport == 80'
+
+(Display Filter Category - Protocol: HTTP)
+    Details and Available Options
+      - Filtering HTTP packets
+        - tshark -Y 'http'
+      - Filtering HTTP packets with response code "200"
+        - tshark -Y "http.response.code == 200"
+
+(Display Filter Category - Protocol: DNS)
+    Details and Available Options
+      - Filtering DNS packets
+        - tshark -Y 'dns'
+      - Filtering all DNS "A" packets
+        - tshark -Y 'dns.qry.type == 1'
+
