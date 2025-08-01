@@ -1,3 +1,54 @@
 ADVANCED FILTERING OPTIONS 
 Contains, Matches and Extract Fields
-  
+  TShark supports Wireshark's "contains" and "matches" operators, which are the key to the advanced filtering options. 
+
+  Quick recap from the Wireshark: Packet Operations room:
+    Filter:
+      Contains
+        - Search a value inside packets.
+        - Case sensitive.
+        - Similar to Wireshark's "find" option
+      Matches
+        - Search a pattern inside packets.
+        - Supports regex.
+        - Case insensitive.
+        - Complex queries have a margin of error.
+
+NOTE: The "contains" and "matches" operators cannot be used with fields consisting of "integer" values.
+TIP: Using HEX and regex values instead of ASCII always has a better chance of a match.
+
+Extract Fields
+  This option helps analysts to extract specific parts of data from the packets.
+  In this way, analysts have the opportunity to collect and correlate various fields from the packets. It also helps analysts manage the query output on the terminal. 
+
+  Main Filter: -T fields
+  Target Field: -e <field name>
+  Show Field Name: -E header=y
+
+NOTE: You need to use the -e parameter for each field you want to display.
+
+You can filter any field by using the field names as shown below.
+  - -T fields -e ip.src -e ip.dst -E header=y
+
+tshark -r demo.pcapng -T fields -e ip.src -e ip.dst -E header=y -c 5
+
+Filter:"contains"
+  Type: Comparison operator
+  Description: Search a value inside packets. It is case-sensitive and provides similar functionality to the "Find" option by focusing on a specific field.
+  Example: Find all "Apache" servers
+  Workflow: List all HTTP packets where the "server" field contains the "Apache" keyword.
+  Usage: http.server contains "Apache"
+
+tshark -r demo.pcapng -Y 'http.server contains "Apache"'
+tshark -r demo.pcapng -Y 'http.server contains "Apache"' -T fields -e ip.src -e ip.dst -e http.server -E header=y
+
+Filter:"matches"
+  Type: Comparison operator
+  Description: Search a pattern of a regular expression. It is case-insensitive, and complex queries have a margin of error.
+  Example: Find all .php and .html pages.
+  Workflow: List all HTTP packets where the "request.method" fields matches the keyword "GET" or "POST".
+  Usage: http.request.method matches "(GET|POST)"
+
+tshark -r demo.pcapng -Y 'http.request.method matches "(GET|POST)"'
+tshark -r demo.pcapng -Y 'http.request.method matches "(GET|POST)"' -T fields -e ip.src -e ip.dst -e http.request.method -E header=y
+
