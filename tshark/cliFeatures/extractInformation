@@ -1,0 +1,29 @@
+USE CASES - EXTRACT INFORMATION
+  When investigating a case, a security analyst should know how to extract hostnames, DNS queries, and user agents to hunt low-hanging fruits after viewing the statistics and creating an investigation plan.
+
+  Extract Hostnames
+    tshark -r hostnames.pcapng -T fields -e dhcp.option.hostname
+
+  Sometimes output is hard to manage when multiple duplicate values exist. A skilled analyst should know how to use native Linux tools/utilities to manage and organise the command line output.
+    thshark -r hostnames.pcapng -T fields -e dhcp.option.hostname | awk NF | sort -r | uniq -c | sort -r
+
+  Now the output is organised and ready to process/use. The logic of the query is explained below.
+  Query:
+    tshark -r hostnames.pcapng -T fields -e dhcp.option.hostname
+      Main query. Extract the DHCP hostname vaue.
+    awk NF
+      Remove empty lines.
+    sort -r
+      Sort recursively before handling the values.
+    uniq -c
+      Show unique values, but calculate and show the number of occurrences.
+    sort -r
+      The final sort process. Show the output/results from high occurrences to less.
+
+  Extract DNS Queries
+    tshark -r dns-queries.pcap -T fields -e dns.qry.name | awk NF | sort -r | uniq -c | sort -r
+
+  Extract User Agents
+    tshark -r user-agents.pcap -T fields -e http.user_agent | awk NF | sort -r | uniq -c | sort -r
+
+    
