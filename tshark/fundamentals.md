@@ -47,7 +47,7 @@ tshark -r demo.pcapng -c 1 -V
 ```bash
 tshark -q
 ```
-##Display packet bytes.
+## Display packet bytes.
 ###Show packet details in hex and ASCII dump for each packet.
 ```bash
 tshark -x
