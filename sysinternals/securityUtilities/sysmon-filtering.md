@@ -49,8 +49,14 @@ Get-WinEvent -Path Hunting_Metasploit.evtx - FilterXPath '*/System/EventID=3 and
 # Basic filter structure
 Get-WinEvent -Path log.evtx -FilteringXPath '*/System/EventID=<ID>'
 
-# Pratical example (THM solution) in current folder file:
+# THM questions and solutions:
+
+# How many event ID 3 events are in C:\Users\THM-Analyst\Desktop\Scenarios\Practice\Filtering.evtx?
 Get-winEvent -Path ".\Filtering_1610225088511.evtx" -FilterXPath '*[System[EventID=3]]' | Measure-Object | Select-Object -Expand Count
+
+# What is the UTC time of the first network event in the same logfile? Note that UTC time is shown only in the "Details" tab.
+Get-WinEvent -Path ".\Filtering_1610225088511.evtx" -FilterXPath "*[System[EventID=3]]" -MaxEvents 1 -Oldest |
+Select-Object -Property *
 ```
 
 ---
