@@ -49,7 +49,7 @@ Get-WinEvent -Path Hunting_Metasploit.evtx - FilterXPath '*/System/EventID=3 and
 # Basic filter structure
 Get-WinEvent -Path log.evtx -FilteringXPath '*/System/EventID=<ID>'
 
-# THM questions and solutions:
+# THM questions and solutions (the Path I used is from file current directory):
 
 # How many event ID 3 events are in C:\Users\THM-Analyst\Desktop\Scenarios\Practice\Filtering.evtx?
 Get-winEvent -Path ".\Filtering_1610225088511.evtx" -FilterXPath '*[System[EventID=3]]' | Measure-Object | Select-Object -Expand Count
