@@ -11,7 +11,7 @@ Focus areas when monitoring with Sysmon:
 - Metasploit artifacts
 - C2 beaconing
 
--- 
+---
 
 ## 🏆 Sysmon Best Practices
 
@@ -49,7 +49,8 @@ Get-WinEvent -Path Hunting_Metasploit.evtx - FilterXPath '*/System/EventID=3 and
 # Basic filter structure
 Get-WinEvent -Path log.evtx -FilteringXPath '*/System/EventID=<ID>'
 
-# Pratical example (THM solution):
+# Pratical example (THM solution) in current folder file:
+Get-winEvent -Path ".\Filtering_1610225088511.evtx" -FilterXPath '*[System[EventID=3]]' | Measure-Object | Select-Object -Expand Count
 ```
 
 ---
