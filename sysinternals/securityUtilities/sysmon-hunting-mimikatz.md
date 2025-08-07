@@ -82,4 +82,14 @@ TimeCreated                     Id  Message
 ---
 
 ## 🔎 Investigation Tips
-- Check SourceImage: Which is accessing
+- Check SourceImage: Which is accessing `lsass.exe`?
+- Is the accessing process signed? Trusted?
+- Correlate with file creation or execution events (Event ID 1 or 11).
+- Use this method across multiple logs to detect credential dumping attempts.
+
+---
+
+## 📚 References
+https://attack.mitre.org/techniques/T1055/
+https://attack.mitre.org/software/S0002/
+https://tryhackme.com/room/sysmon
