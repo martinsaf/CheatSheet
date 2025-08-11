@@ -6,6 +6,8 @@
 # -------------------------------
 # General Help
 # -------------------------------
+# Official Documentation: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
+# Show help
 wevtutil.exe /?
 
 # Show detailed help for the 'query events' command
