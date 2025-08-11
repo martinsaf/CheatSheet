@@ -3,9 +3,11 @@
 # Source: TryHackMe - Windows Event Logs (Task 4)
 # Description: PowerShell cmdlet to get events from event logs and ETL files on local/remote computers.
 
+
 # -------------------------------
 # General Help
 # -------------------------------
+# Official Documentation: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent
 # Show help for the Get-WinEvent cmdlet
 Get-Help Get-WinEvent -Full
 
@@ -33,7 +35,7 @@ Get-WinEvent -LogName Application | Where-Object { $_.ProviderName -Match 'WLMS'
 # -------------------------------
 # Same result as above but using FilterHashtable (more efficient for large logs)
 Get-WinEvent -FilterHashtable @{
-  Logame='Application'
+  LogName='Application'
   ProviderName='WLMS'
 }
 
@@ -56,3 +58,9 @@ Get-WinEvent -FilterHashtable @{
 Get-WinEvent -ListProvider * 2>$null |
     Where-Object { $_.Name -match 'PowerShell' } |
     Select-Object -ExpandProperty Name
+
+# It lists all event IDs and descriptions defined by the Microsoft-Windows-PowerShell provider, and then counts the total number of resulting rows.
+(Get-WinEvent -ListProvider Microsoft-Windows-PowerShell).Events |
+    Format-Table Id, Description | Measure-Object
+
+
