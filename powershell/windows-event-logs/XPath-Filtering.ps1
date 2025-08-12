@@ -23,3 +23,6 @@ wevtutil.exe qe Application /q:*/System[EventID=100] /f:text /c:1
 
 # Filter events from provider WLMS at a specific timestamp
 Get-WinEvent -LogName Application -FilterXPath '*/System/Provider[@Name="WLMS"] and */System/TimeCreated[@SystemTime="2020-12-15T01:09:08.940277500Z"]'
+
+# Filter Security events where TargetUserName equals "Sam" and EventID is 4720 (User account creation)
+Get-WinEvent -LogName Security -FilterXPath '*/EventData/Data[@Name="TargetUserName"]="Sam" and */System/EventID=4720'
