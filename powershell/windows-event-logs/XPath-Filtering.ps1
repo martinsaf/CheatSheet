@@ -10,7 +10,7 @@
 Get-WinEvent -LogName Application -FilterXPath '*/System/EventID=100'
 
 # Filter events from provider WLMS
-Get-WinEvent -LogName Application -FilterXPath '*/System/Provider[@Name='WLMS']'
+Get-WinEvent -LogName Application -FilterXPath '*/System/Provider[@Name="WLMS"]'
 
 # Filter events from provider with EventID 101
 Get-WinEvent -LogName Application -FilterXPath '*/System/EventID=101 and */System/Provider[@Name="WLMS"]'
@@ -21,3 +21,5 @@ Get-WinEvent -LogName Security -FilterXPath '*/EventData/Data[@Name="TargetUserN
 # Equivalent example using wevtutil.exe (EventID=100 from Application log)
 wevtutil.exe qe Application /q:*/System[EventID=100] /f:text /c:1
 
+# Filter events from provider WLMS at a specific timestamp
+Get-WinEvent -LogName Application -FilterXPath '*/System/Provider[@Name="WLMS"] and */System/TimeCreated[@SystemTime="2020-12-15T01:09:08.940277500Z"]'
