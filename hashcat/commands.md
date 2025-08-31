@@ -2,13 +2,13 @@
 
 ## Identify hash (with hashid):
 ```markdown
-hashid <HASH>
+<PATH>\hashid.exe <HASH>
 ```
 ## Crack SHA1:
 ```markdown
-hashcat -m 100 -a 0 <HASH> <WORDLIST>
+hashcat.exe -m 100 -a 0 <HASH> <WORDLIST>
 ```
 ## View results:
 ```markdown
-hashcat --show <HASH>
+type hashcat.potfile
 ```
