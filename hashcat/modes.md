@@ -8,7 +8,7 @@
 | 100  | SHA1      |
 | 1000 | NTLM      |
 | 1400 | SHA256    |
-| 1419 | SHA256 ($pass.$salt)  |
+| 1410 | SHA256 ($pass.$salt)  |
 | 1800 | SHA512    |
 | 3200 | bcrypt    |
 | 22000 | WPA-PBKDF2 |
