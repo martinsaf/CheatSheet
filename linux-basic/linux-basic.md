@@ -44,6 +44,7 @@
 ---
 
 ## Gestão de serviços
+`systemctl suspend` and `systemctl hibernate`
 
 - Comandos modernos: `systemctl start/stop/restart/status <servicos>`
 - Legado: `service <name> start/stop/restart/status` (compatibilidade)
