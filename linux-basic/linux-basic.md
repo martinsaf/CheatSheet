@@ -230,3 +230,70 @@ sudo tail -n 20 /var/log/syslog | ccze -A # linhas com falhas de autenticacao co
 ---
 ## Firewall
 - Comandos: `ufw`
+---
+## Gestão de Rotas
+### Rotas de rede (`ip route`)
+- Comando base: `ip route`
+- Funcao: Mostrar, adicionar ou remover rotas na tabela de encaminhamento do kernel
+- Problemas comuns: 
+	- "RTNETLINK answers: File exists" -> rota já existe
+	- "Network is unreachable" -> gateway incorreto ou interface desligada
+	- Rota desaparece após reboot -> não persistente (usar ficheiro de config)
+#### 📘 Comandos úteis
+```bash
+	ip route show # Ver tabela de rotas atual
+	ip route add 192.168.1.0/24 via 192.168.0.1 dev eth0 # Adiciona rota estática
+	ip route del 192.168.1.0/24 # Remove rota
+	ip route add default via 192.168.0.1 # Define gateway padrao
+	sudo ip route del default via 192.168.200.1
+	ip route get 8.8.8.8 # Ver qual rota seria usada
+```
+💡 Tornar rotas persistentes
+Em Debian/Ubuntu, editar o ficheiro:
+```bash
+sudo nano /etc/netplan/<ficheiro.yaml>
+```
+E adicionar dentro da interface:
+```yaml
+routes:
+  - to: 192.168.1.0/24
+    via: 192.168.0.1
+```
+Depois aplicar:
+```bash
+sudo netplan apply
+```
+
+### NetworkManager (nmcli)
+- Ver ligações e dispositivos
+```bash
+nmcli con show # Lista todas as "ligacoes" (perfis de rede)
+nmcli dev status # Mostra estado das interfaces (conectado? desligado?)
+nmcli con show "Nome da Ligacao" # Detalhes de uma ligacao especifica
+```
+- Ligar/Desligar uma ligação
+```bash
+nmcli con up "Wired connection 1" # Ativa uma ligacao
+nmcli con down "Wired connection 1" # Desativa
+```
+- Criar uma ligação Ethernet estática (ex: para lab)
+```bash
+nmcli con add type ethernet con-name "lab-eth" ifname enp0s3 \
+ipv4.addresses 192.168.200.3/24 \
+ipv4.method manual
+```
+- Criar ligação Wi-Fi (util em CTFs ou labs moveis)
+```bash
+nmcli dev wifi connect "SSID" password "senha"
+```
+- Recarregar configurações (sem reiniciar)
+```bash
+nmcli con reload # Recarrega ficheiros de config (ex: apos editar /etc/NetworkManager/)
+```
+
+#### Quando usar `nmcli` vs `ip` vs `netplan`?
+| Ferramenta | Quando usar                                                                                         |
+| ---------- | --------------------------------------------------------------------------------------------------- |
+| ip         | Comandos temporários (debug, testes rápidos) - desaparecem no reboot                                |
+| netplan    | Configuração persistente inicial (ficheiros YAML) - ideal para servidores                           |
+| nmcli      | Gestão interativa e persistente em desktops/laptops - especialmente com Wi-Fi ou ligações múltiplas |
