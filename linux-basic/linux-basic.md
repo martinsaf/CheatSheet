@@ -44,6 +44,9 @@
     - *Permission denied* → use `sudo`
     - *Command not found* → install package / fix PATH
 
+### Search for files
+	- `find ~ -name "*.txt"` — Searches for all `.txt` files in the home directory
+
 ---
 
 # 4. 👤 User & Group Management
