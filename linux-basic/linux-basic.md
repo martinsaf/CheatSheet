@@ -1,299 +1,200 @@
-## Sistema & Info
-- `cat /etc/os-release` -> Ver versão do SO
-- `<comando> | ccze -A` -> Ver info detalhada do sistema
-- `uname -a` -> Ver kernel
-- `apt update && apt upgrade`
-- `netsh interface ip set address name="Ethernet" static 192.168.100.1 255.255.255.0` -> segunda interface
-## Journalctl (Logs do Systemd)
-- Ver todos os logs (desde o  boot): `journalctl`
-- Ver logs de um serviço especifico: `journalctl -u nome_do_serivo.service` (ex: `-u ssh.service`)
-- Ver logs por prioridade:
-	- `journalctl -p err..alert` -> So erros e acima
-	- `journalctl -p err` -> So erros
-	- Níveis: `emrg` (0), `alert` (1), `crit` (2), `err` (3), `warning` (4), `notice` (5), `info` (6), `debug` (7)
-- Ver logs desde/ate
-	- `journalctl --since "2024-01-15 14:30:00"`
-	- `journalctl --since "1 hour ago"`
-	- `journalctl --since yesterday --until "today 09:00"`
-- Seguir logs em tempo real (like `tail -f`): `journalctl -f`
-- Ver logs do ultimo boot: `journalctl -b`
-- Ver logs de um binario/executavel: `journalctl /usr/bin/sshd`
-- Formatar a saida:
-	- `journalctl -o json-pretty` -> Para JSON legivel (util para scripts)
-	- `journalctl -o verbose` -> Mostra todos os campos disponiveis
-- Combina filtros (ex: erros do SSH desde ontem):
-	- `journalctl -u ssh.service -p err --since yesterday`
-- Protegendo os logs:
-	- Ver uso em disco: `journalctl --disk-usage`
-	- Limpar logs antigos (>2 semanas): `sudo journalctl --cavum-time=2weeks`
-## Navegação
-
-- Comandos: `cd`, `ls`, `pwd`, `mkdir`, `rm`
-- Função: Navegar, listar e gerir ficheiros/diretórios
-- Problemas comuns:
-    - Erro “Permission denied” → usar `sudo` ou verificar permissões
-    - Comando não encontrado → verificar path ou instalar utilitário
+# 📘 Basic Linux
 
 ---
 
-## Gestão de utilizadores e grupos
+# 1. 🖥️ System & Information
 
-- Comandos: `adduser`, `deluser`, `usermod`, `addgroup`, `chfn`, `sudo visudo`
-- Função: Criar, remover e modificar utilizadores/grupos; gerenciar permissões de `sudo`
-- Problemas comuns:
-    - Utilizador não consegue `sudo` → verificar `/etc/sudoers`
-    - Grupo não existe → criar grupo primeiro com `addgroup`
-    - Criação do utilizador interrompida -> `chfn <user>` (change finger)
-    - [!⚠] Não editar `/etc/sudoers` **diretamente**, sempre usar `sudo visudo` para evitar corromper o arquivo
-
-##### Gestão de utilizadores
-- Criar utilizador -> `sudo adduser nome`
-- Apagar utilizador -> `sudo deluser nome`
-- Modificar utilizador -> `sudo usermod [opcoes] nome`
-- Alterar palavra-chave -> `passwd nome`
-- Trocar de utilizador -> `su - nome`
-- Ver grupo primário e UID -> `id nome`
-- Ver entrada completa no passwd -> `grep nome /etc/passwd`
-##### Gestão de grupos
-- Criar grupo -> `sudo addgroup grupo`
-- Adicionar user a grupo -> `sudo usermod -aG grupo nome`
-- Ver grupos do user -> `groups nome`
-
-##### Permissões de ficheiros e pastas
-- Ver permissões -> `ls -l`
-- Alterar permissões -> `chmod [valor] ficheiro`
-- Alterar dono -> `chown user:group ficheiro`
-- Alterar propriedade de ficheiro para o grupo -> `chown :grupo ficheiro`
-- Alterar grupo -> `chgrp grupo ficheiro`
-
-##### 📌Tabela de permissões `chmod` (octal)
-| Valor | Permissões | Significado                  |
-| ----- | ---------- | ---------------------------- |
-| 0     | ---        | Nenhuma permissão            |
-| 1     | --x        | So execução                  |
-| 2     | -w-        | So escrita                   |
-| 3     | -wx        | Escrita + execução           |
-| 4     | r--        | so leitura                   |
-| 5     | r-x        | Leitura + execução           |
-| 6     | rw-        | Leitura + escrita            |
-| 7     | rwx        | Leitura + escrita + execução |
-
-- So o owner pode ler e escrever -> `chmod 600 ~/caminho_do_ficheiro`
-##### `sudo` & privilégios
-- Editar `sudoers` -> `sudo visudo`
-- Dar permissão `sudo` a um user -> adicionar linha no `sudoers`:
-```EBNF
-user ALL=(ALL) ALL
-```
-- Restringir comandos específicos:
-```EBNF
-tecnico ALL=(ALL) /usr/bin/systemctl restart ssh
-```
-
-##### Segurança SSH e acesso
-- Config SSH -> `/etc/ssh/ssh_config`
-	- `AllowUsers analyst tecnico` -> so permite logins a users específicos
-	- `DenyUsers operador` -> bloqueia este user
-- Reiniciar SSH -> `sudo systemctl restart ssh`
-
-```bash
-#!/bin/bash
-# Verifica falhas de login SSH nas ultimas 2 horas
-count=$(journalctl -u ssh.service --since "2 hours ago" | grep "Failed password" | wc -l)
-if [ $count -gt 5 ]; then
-	echo "[ALERTA] $count falhas de login SSH nas utlimas 2h!" | wall
-	# Poderia tambem enviar um email aqui
-fi
-```
-- Agendar este script com cron para correr de 10 em 10 minutos.
+- `cat /etc/os-release` — Check OS version
+- `uname -a` — Check kernel version
+- `apt update && apt upgrade` — Update system
+- `<command> | ccze -A` — Colorize output
 
 ---
 
-## Gestão de processos
+# 2. 📑 Journalctl (Systemd Logs)
 
-- Comandos: `ps`, `top`, `ps -u <user>`, `kill`
-- Função: Ver processos em execução (todos ou de um utilizador) e terminá-los
-- Problemas comuns:
-    - “Operation not permitted” → usar `sudo`
-    - PID incorreto → confirmar PID com `ps` novamente        
+### Main Commands
 
-##### Terminar um processo
-```bash
-kill <PID>
-```
-###### Se o processo resistir
-```bash
-kill -9 <PID>
-```
+- `journalctl` — View all logs
+- `journalctl -u <service>` — Logs for a specific service (e.g., `ssh.service`)
+- `journalctl -p err..alert` — Filter by severity
+- `journalctl --since "1 hour ago"`
+- `journalctl --since yesterday --until "today 09:00"`
+- `journalctl -f` — Follow logs in real time
+- `journalctl -b` — Logs from the last boot
+- `journalctl /usr/bin/sshd` — Logs from a specific binary
 
----
+### Format Output
 
-## Gestão de serviços
+- `journalctl -o json-pretty`
+- `journalctl -o verbose`
 
-- Comandos modernos: `systemctl start/stop/restart/status <servicos>`
-- Extra: `systemctl list-units --type=service` (listar serviços ativos)
-- Legado: `service <name> start/stop/restart/status` (compatibilidade)
-- Função: Controlar serviços do sistema (`SSH`, `cron`, `rsyslog`, networking)
-- Problemas comuns:
-    - Serviço não inicia → verificar logs em `/var/log/`
-    - Porta já em uso → identificar processo com `lsof -i :80`
-    - Apenas admin com `sudo` consegue controlar serviços
+### Maintenance
 
-##### Ver serviços ativos
-```bash
-systemctl liust-units --type=service
-```
-
-##### Controlar serviços
-```bash
-sudo systemctl start ssh
-sudo systemctl stop ssh
-sudo systemctl restart ssh
-sudo systemctl status ssh
-sudo systemctl suspend # suspender o sistema
-sudo systemctl hibernate # hibernar o sistema
-```
-
-- Depois de `systemctl restart ssh`, verificar se correu bem: `journalctl -u ssh.service --since "2 minutes ago" -n 20`
-- Se um serviço falhar ao iniciar, os logs são o primeiro sitio para ver: `journalctl -u nome_do_servico_falhado.service -p err`
+- `journalctl --disk-usage` — Check disk space used
+- `sudo journalctl --vacuum-time=2weeks` — Clean up old logs
 
 ---
 
-## Scripts simples
+# 3. 📂 System Navigation
 
-- Função: Automatizar tarefas como backup diário ou logs
-- Exemplo: Script de backup diário ou log 
-- Ferramenta: `bash`, editor `nano`/`vim`
-- Problemas comuns:
-    - Permissões de execução → `chmod +x script.sh`
-    - Caminhos errados → usar paths absolutos
+- `cd`, `ls`, `pwd`, `mkdir`, `rm`
+
+- Common Issues:
+    - *Permission denied* → use `sudo`
+    - *Command not found* → install package / fix PATH
+
 ---
-## Rede
-- Comandos: `ping`, `ipconfig`, `ip a`, `netstat`, `curl`, `wget`
-- Função: Testar conectividade e informações de rede
-- Problemas comuns:
-	- Host inacessível -> checar cabo, Wi-Fi ou firewall
-	- Comando não encontrado -> instalar pacote correspondente (net-tools) para `ifconfig`
-	- Resposta lenta -> verificar latência e rota
 
+# 4. 👤 User & Group Management
 
-```bash
-# Listar logs da diretoria /var//log do mais recente para o mais antigo
-ls -lt /var/log
+### Users
+
+- `sudo adduser name`
+- `sudo deluser name`
+- `sudo usermod [options] name`
+- `passwd name`
+- `su - name`
+- `id name`
+- `grep name /etc/passwd`
+
+### Groups
+
+- `sudo addgroup group`
+- `sudo usermod -aG group name`
+- `groups name`
+
+---
+
+# 5. 🔐 Permissions & Ownership
+
+- `ls -l`, `chmod`, `chown`, `chgrp`
+
+### chmod Table (Octal)
+
+| Value | Permissions | Meaning                      |
+| ----- | ----------- | ---------------------------- |
+| 0     | ---         | No permissions               |
+| 1     | --x         | Execute only                 |
+| 2     | -w-         | Write only                   |
+| 3     | -wx         | Write + execute              |
+| 4     | r--         | Read only                    |
+| 5     | r-x         | Read + execute               |
+| 6     | rw-         | Read + write                 |
+| 7     | rwx         | Read + write + execute       |
+
+### Examples
+- `chmod 644 file.txt`
+- `chmod 755 script.sh`
+- `chmod 600 private_key`
+- `sudo chown user:group file`
+
+---
+
+# 6. 🛡️ Sudo & Security
+
+- Edit sudoers (always use visudo): `user ALL=(ALL) ALL`
+- Grant sudo permission: user ALL=(ALL) ALL
+- Restrict commands:
+- `technician ALL=(ALL) /usr/bin/systemctl restart ssh`
+
+---
+
+# 7. 🔒 SSH Security
+
+- Config: `/etc/ssh/ssh_config`
+- Examples: `AllowUsers analyst technician`, `DenyUsers operator`
+- Restart SSH: `sudo systemctl restart ssh`
+
+---
+
+# 8. ⚙️ Process Management
+### Processes
+- `ps`, `ps -u user`, `top`
+- `kill <PID>` — Terminate a process
+- `kill -9 <PID>` — If the process resists
+
+### Services (systemd)
+- `systemctl start/stop/restart/status <service>`
+- `systemctl list-units --type=service` — View active services
+- `journalctl -u <service> -p err`
+
+---
+
+# 9. 📜 Scripts & Automation
+
+- `chmod +x script.sh`
+- Use absolute paths
+
+---
+
+# 10. 🌐 Network (Interface & Configuration)
+
+### Basic Commands
+- `ping`, `ip a`, `ip route`, `curl`, `wget`
+- `ls -lt /var/log` — List logs from newest to oldest
+- `sudo tail -n 20 /var/log/syslog | ccze -A` — Colored lines with authentication failures
+
+### Routes (ip route)
+```text
+ip route show
+ip route add 192.168.1.0/24 via 192.168.0.1 dev eth0
+ip route del 192.168.1.0/24
+ip route add default via 192.168.0.1
+ip route get 8.8.8.8
 ```
-
-```bash
-# Mostra erros de login
-sudo tail -n 20 /var/log/syslog | ccze -A # linhas com falhas de autenticacao coloridas
-```
-
-
-
-
----
-
-## Pacotes / Gestão de software
-- Comandos: `apt update`, `apt upgrade`, `apt install`, `apt remove`, `dpkg -i`
-- Função: Instalar, atualizar ou remover pacotes em distribuições Debian/Ubuntu
-- Problemas comuns:
-	- "Package not found" -> atualizar repositórios com `apt update`
-	- Dependências quebradas -> usar `apt --fix-broken install`
-	- Permissão negada -> usar `sudo`
----
-
-## Permissões e propriedades de ficheiros
-- Comandos: `chmod`, `chown`, `chgrp`, `ls -l`
-- Função: Alterar permissões e propriedades de arquivos e diretorias
-- Problemas comuns:
-	- "Operation not permitted" -> usar sudo
-	- Permissões incorretas -> rever números/flags de `chmod`
-	- Utilizador/grupo inexistente -> verificar com id ou groups
----
-
-## Discos e armazenamento
-- Comandos: `df`, `du`, `mount`, `umount`, `lsblk`
-- Função: Verificar uso de disco e gerenciar pontos de montagem
-- Problemas comuns:
-	- Montagem falhou -> verificar se a diretoria existe ou se esta' ocupada
-	- Permissão negada -> usar `sudo`
-	- Espaço insuficiente -> libertar ou expandir partição
----
-
-## Compressão e arquivos
-- Comandos: `tar`, `gzip`, `gunzip`, `zip`, `unzip`
-- Função: Compactar e descompactar arquivos e diretorias
-- Problemas comuns:
-	- Arquivo inexistente -> conferir path e nome do arquivo
-	- Permissão negada -> usar `sudo`
-	- Formato invalido -> verificar extensão correta
-
----
-## Firewall
-- Comandos: `ufw`
----
-## Gestão de Rotas
-### Rotas de rede (`ip route`)
-- Comando base: `ip route`
-- Funcao: Mostrar, adicionar ou remover rotas na tabela de encaminhamento do kernel
-- Problemas comuns: 
-	- "RTNETLINK answers: File exists" -> rota já existe
-	- "Network is unreachable" -> gateway incorreto ou interface desligada
-	- Rota desaparece após reboot -> não persistente (usar ficheiro de config)
-#### 📘 Comandos úteis
-```bash
-	ip route show # Ver tabela de rotas atual
-	ip route add 192.168.1.0/24 via 192.168.0.1 dev eth0 # Adiciona rota estática
-	ip route del 192.168.1.0/24 # Remove rota
-	ip route add default via 192.168.0.1 # Define gateway padrao
-	sudo ip route del default via 192.168.200.1
-	ip route get 8.8.8.8 # Ver qual rota seria usada
-```
-💡 Tornar rotas persistentes
-Em Debian/Ubuntu, editar o ficheiro:
-```bash
-sudo nano /etc/netplan/<ficheiro.yaml>
-```
-E adicionar dentro da interface:
-```yaml
-routes:
-  - to: 192.168.1.0/24
-    via: 192.168.0.1
-```
-Depois aplicar:
-```bash
-sudo netplan apply
+#### Persistence (netplan)
+```text
+routes: 
+	- to: 192.168.1.0/24
+	  via: 192.168.0.1
 ```
 
 ### NetworkManager (nmcli)
-- Ver ligações e dispositivos
-```bash
-nmcli con show # Lista todas as "ligacoes" (perfis de rede)
-nmcli dev status # Mostra estado das interfaces (conectado? desligado?)
-nmcli con show "Nome da Ligacao" # Detalhes de uma ligacao especifica
-```
-- Ligar/Desligar uma ligação
-```bash
-nmcli con up "Wired connection 1" # Ativa uma ligacao
-nmcli con down "Wired connection 1" # Desativa
-```
-- Criar uma ligação Ethernet estática (ex: para lab)
-```bash
-nmcli con add type ethernet con-name "lab-eth" ifname enp0s3 \
-ipv4.addresses 192.168.200.3/24 \
-ipv4.method manual
-```
-- Criar ligação Wi-Fi (util em CTFs ou labs moveis)
-```bash
-nmcli dev wifi connect "SSID" password "senha"
-```
-- Recarregar configurações (sem reiniciar)
-```bash
-nmcli con reload # Recarrega ficheiros de config (ex: apos editar /etc/NetworkManager/)
+- `nmcli con show`, `nmcli dev status`
+- `nmcli con up "Connection"`
+- `nmcli con add type ethernet ...`
+- `nmcli dev wifi connect "SSID" password "password"`
+- `nmcli con reload`
+
+### Persistent Configuration (/etc/network/interfaces)
+```text
+# iface ens160 inet dhcp
+iface ens160 inet static
+	address 10.222.4.46
+	netmask 255.255.255.0
+	gateway 10.222.4.10
+	
+dns-nameservers 10.222.4.10
 ```
 
-#### Quando usar `nmcli` vs `ip` vs `netplan`?
-| Ferramenta | Quando usar                                                                                         |
-| ---------- | --------------------------------------------------------------------------------------------------- |
-| ip         | Comandos temporários (debug, testes rápidos) - desaparecem no reboot                                |
-| netplan    | Configuração persistente inicial (ficheiros YAML) - ideal para servidores                           |
-| nmcli      | Gestão interativa e persistente em desktops/laptops - especialmente com Wi-Fi ou ligações múltiplas |
+---
+
+# 11. 📦 Packages (APT)
+
+- `apt update`,  `apt upgrade`
+- `apt install <pkg>`, `apt remove <pkg>`
+- `apt --fix-broken install`
+
+---
+
+# 12. 💾 Disks & Storage
+
+- `df -h`, `du -sh *`, `lsblk`
+- `mount` / `umount`
+
+---
+
+# 13. 🗜️ Compression
+
+- `tar`, `gzip`, `zip`, `unzip`
+
+---
+
+# 14. 🔥 Firewall (UFW)
+
+- `ufw status`
+- `ufw allow 22`
+- `ufw deny <port>`
+
+---
