@@ -201,3 +201,45 @@ dns-nameservers 10.222.4.10
 - `ufw deny <port>`
 
 ---
+
+# 15. 🩺 System Diagnosis
+(Logical Sequence)
+```bash
+#1. 🕵️‍♂️ PROCESS IDENTIFICATION
+ps aux              # Photo of all processes
+top                 # Real-time monitoring
+pgrep <name>        # Find specific PID
+
+# 2. 📊 SYSTEM HEALTH
+uptime              # System load + uptime
+free -h             # Available RAM memory
+df -h               # Disk space
+
+# 3. 🔧 PROCESS MANAGEMENT
+kill <PID>          # Gracefully stop process
+kill -0 <PID>       # Force stop (last resort)
+
+# 4. 🌐 NETWORK VERIFICATION
+ss -tuln            # Open ports (TCP/UDP)
+systemctl ssh state # Critical services
+```
+Diagnostic Order:
+1. Processes -> 2. Resources -> 3. Network -> 4. Services
+
+---
+
+# 16. 🐛 LOGS & DEBUF
+(Complementary to Journactl)
+```bash
+# REAL-TIME LOGS
+sudo tail -f /var/log/syslog   # General logs
+sudo tail -f /var/log/auth.log # Authentications
+
+# CHECK CRITICAL SERVICES
+systemctl list-units --type=service --state=failed
+systemctl --failed
+
+# CONTINUOUS MONITORING
+watch -n 2 'ps aux | head -20' # View processes every 2s
+htop                           # Enhanced top (if installed)
+```
