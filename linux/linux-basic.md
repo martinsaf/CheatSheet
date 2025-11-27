@@ -228,7 +228,7 @@ Diagnostic Order:
 
 ---
 
-# 16. 🐛 LOGS & DEBUF
+# 16. 🐛 LOGS & DEBUG
 (Complementary to Journactl)
 ```bash
 # REAL-TIME LOGS
