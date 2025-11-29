@@ -1,5 +1,5 @@
 ; BIND9 Zone File for danune.cb subdomain
-; Exercise 2b - Subdomain Configuration
+; Exercise 2 - Subdomain Configuration
 
 $TTL    20
 @       IN      SOA     milk.danune.cb. admin.danune.cb. (
