@@ -16,8 +16,11 @@ $TTL    20
 milk    IN      A       172.18.0.3
 cliente IN      A       172.18.0.5
 servidor IN     A       172.18.0.4
+iogurte IN      A       172.18.0.6
 
-; AAAA Records - IPv6 (Exercise 2d)
+; AAAA Records - IPv6
 milk6   IN      AAAA    ::1
 cliente6 IN     AAAA    ::1
 servidor6 IN    AAAA    ::1
+iogurte6 IN     AAAA    ::1
+
