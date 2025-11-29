@@ -32,3 +32,14 @@ dig @172.18.0.2 dns.cb
 # Test locally on DNS server
 dig @127.0.0.1 dns.cb
 ```
+
+## DNS Delegation Issues
+
+### Symptoms: 
+- nslookup works with specific server, but ping doesnt
+- "unknown host" errors despite DNS resolution working
+
+### Solutions:
+- Verify both DNS server in `/etc/resolv.conf`
+- Test with `nslookup hostname dns-server-ip`
+- Check delegation with `dig +trace`
