@@ -1,0 +1,12 @@
+// BIND9 Options Configuration
+// Disables recursion for authoritative-only server
+
+options {
+    directory "/var/cache/bind";
+    recursion no;                    // Authoritative only
+    allow-query { any; };           // Allow queries from any client
+    listen-on { any; };             // Listen on all interfaces
+    listen-on-v6 { any; };
+    dnssec-validation auto;
+    auth-nxdomain no;               // RFC 1035 compliance
+};
