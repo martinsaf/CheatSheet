@@ -24,3 +24,21 @@ Practical DNS server configuration using BIND9 on Docker containers.
 
 ## Useful Commands
 See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
+
+## Exercise 1 - Primary DNS Server Configuration
+
+### ✅ 1a) Primary server for .cb domain
+- Configured with required timeout in `db.cb`
+- Refresh: 600s (10min), Retry: 60s (1min), Expire: 86400s (1 day), TTL: 20s
+
+### ✅ 1b) A record for dns.cb
+- `dns IN A 172.18.0.2` in zone file
+
+### ✅ 1c) Client DNS Configuration
+- Client configured to use 172.18.0.2 as nameserver
+
+### ✅ 1d) DNS resolution test
+- `ping dns.cb` successful
+
+### 🔍 1e) Non-existent domain test
+- `ping cliente.danune.cb` fails as expected (subdomain not configured yet)
