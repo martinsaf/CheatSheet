@@ -1,18 +1,26 @@
-# BIND9 Laboratory - DNS Server Configuration
+# BIND9 DNS Server Lab
 
-## Objectives
-Configure primary, secondary, and subdomain DNS servers following the practical guide
+## Lab Overview
+Practical DNS server configuration using BIND9 on Docker containers.
 
-## Network Structure
-- **dns-primary**: 172.18.0.2 (Primary .cb server)
-- **dns-subdomain**: 172.18.0.5 (danune.cb server)
-- ***dns-secondary**: 172.18.0.3 (secondary server)
-- **client**: 172.18.0.4 (test client)
+## Network Architecture
+| Role | Hostname | IP Address |
+|------|----------|------------|
+| Primary DNS Server | dns-primary | 172.18.0.2 |
+| Subdomain DNS Server | dns-subdomain | 172.18.0.5 |
+| Secondary DNS Server | dns-secondary | 172.18.0.3 |
+| Test Client | client | 172.18.0.4 |
 
 ## Exercises
-1. [Primary Server Configuration](bind9/configs/db.cb)
-2. [Subdomain Configuration]()
-3. [Secondary Server Configuration]()
+1. Primary DNS Server Configuration (.cb domain)
+2. Subdomain DNS Server Configuration (danune.cb)  
+3. Secondary DNS Server Configuration
+4. DNS Delegation and Zone Transfers
+
+## Configuration Files
+- [named.conf.local](bind9-configs/named.conf.local)
+- [db.cb](bind9-configs/db.cb)
+- [named.conf.options](bind9-configs/named.conf.options)
 
 ## Useful Commands
-[See troubleshooting.md](troubleshooting.md)
+See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
