@@ -7,9 +7,9 @@ Practical DNS server configuration using BIND9 on Docker containers.
 | Role | Hostname | IP Address |
 |------|----------|------------|
 | Primary DNS Server | dns-primary | 172.18.0.2 |
-| Subdomain DNS Server | dns-subdomain | 172.18.0.5 |
-| Secondary DNS Server | dns-secondary | 172.18.0.3 |
-| Test Client | client | 172.18.0.4 |
+| Subdomain DNS Server | dns-subdomain | 172.18.0.3 |
+| Secondary DNS Server | dns-secondary | 172.18.0.4 |
+| Test Client | client | 172.18.0.5 |
 
 ## Exercises
 1. Primary DNS Server Configuration (.cb domain)
@@ -35,7 +35,7 @@ See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
 - `dns IN A 172.18.0.2` in zone file
 
 ### ✅ 1c) Client DNS Configuration
-- Client configured to use 172.18.0.2 as nameserver
+- Client configured to use 172.18.0.5 as nameserver
 
 ### ✅ 1d) DNS resolution test
 - `ping dns.cb` successful
@@ -47,7 +47,7 @@ See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
 
 ### ✅ 2a) Subdomain delegation in primary server
 - Added NS record for `danune.cb` in `db.cb`
-- Added glue record `milk.danune.cb A 172.18.0.5`
+- Added glue record `milk.danune.cb A 172.18.0.3`
 
 ### 🔄 2b) Subdomain server configuration
 - Created zone file `db.danune.cb` with required timeouts
