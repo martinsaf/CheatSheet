@@ -17,7 +17,7 @@ netstat -tuln | grep :53
 ### 2. Configuration Syntax Checking
 ```bash
 # Check zone file syntax
-named-checkzone cb /etc/bind/db.db
+named-checkzone cb /etc/bind/db.cb
 
 # Check main configuration
 named-checkconf
