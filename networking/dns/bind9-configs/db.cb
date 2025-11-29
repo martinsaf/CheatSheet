@@ -12,3 +12,7 @@ $TTL    20
 
 ; A Records
 dns     IN      A       172.18.0.2
+
+; Subdomain Delegation - Exercise 2a
+danune  IN      NS      milk.danune.cb.
+milk.danune IN  A       172.18.0.5
