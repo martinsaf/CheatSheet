@@ -42,3 +42,13 @@ See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
 
 ### 🔍 1e) Non-existent domain test
 - `ping cliente.danune.cb` fails as expected (subdomain not configured yet)
+
+## Exercise 2 - Subdomain DNS Server
+
+### ✅ 2a) Subdomain delegation in primary server
+- Added NS record for `danune.cb` in `db.cb`
+- Added glue record `milk.danune.cb A 172.18.0.5`
+
+### 🔄 2b) Subdomain server configuration
+- Created zone file `db.danune.cb` with required timeouts
+- Refresh: 300s (5min), Retry: 60s (1min), Expire: 86400s (1 day), TTL: 20s
