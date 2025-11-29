@@ -1,0 +1,16 @@
+; BIND9 Zone File for danune.cb subdomain
+; Exercise 2b - Subdomain Configuration
+
+$TTL    20
+@       IN      SOA     milk.danune.cb. admin.danune.cb. (
+                              1         ; Serial
+                         300         ; Refresh (5 minutes)
+                          60         ; Retry (1 minute)
+                        86400         ; Expire (1 day)
+                            20 )      ; Negative Cache TTL
+
+; Name Servers
+@       IN      NS      milk.danune.cb.
+
+; A Records
+milk    IN      A       172.18.0.5
