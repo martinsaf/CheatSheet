@@ -64,3 +64,25 @@ See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
 - DNS resolution working through delegation chain
 - IP connectivity verified with ping
 
+## Exercise 3 - Secondary DNS Server
+
+### ✅ 3a) Secondary server configuration
+- Configured as slave for `danune.cb` domain
+- Zone files stored in `/var/cache/bind/`
+
+### ✅ 3b) Automatic zone transfer verified
+- Zone file successfully transferred from primary
+- All records replicated correctly
+
+### ✅ 3c) Record addition and serial increment
+- Added `iogurte.danune.cb A 172.18.0.6`
+- Serial increased from 2 to 3
+
+### ✅ 3d) Automatic replication verified
+- New record automatically replicated to secondary
+- Secondary serves updated zone data
+
+### ✅ 3e) Failover testing
+- Primary server stopped
+- Secondary continues to serve DNS queries
+- High availability demonstrated
