@@ -1,7 +1,7 @@
 ; BIND9 Zone File for .cb domain
 $TTL    20
 @       IN      SOA     dns.cb. admin.cb. (
-                              1         ; Serial
+                              3         ; Serial
                          600         ; Refresh (10 minutes)
                           60         ; Retry (1 minute) 
                         86400         ; Expire (1 day)
