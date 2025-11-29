@@ -49,6 +49,18 @@ See [troubleshooting guide](troubleshooting.md) for common issues and solutions.
 - Added NS record for `danune.cb` in `db.cb`
 - Added glue record `milk.danune.cb A 172.18.0.3`
 
-### 🔄 2b) Subdomain server configuration
+### ✅ 2b) Subdomain server configuration
 - Created zone file `db.danune.cb` with required timeouts
 - Refresh: 300s (5min), Retry: 60s (1min), Expire: 86400s (1 day), TTL: 20s
+
+### ✅ 2c) Additional A records in subdomain
+- `cliente.danune.cb A 172.18.0.5` (client)
+- `servidor.danune.cb A 172.18.0.4` (dns-secondary)
+
+### ✅ 2d) IPv6 records (placeholder)
+- Added AAAA records with ::1 placeholder
+
+### ✅ 2e) Connectivity testing
+- DNS resolution working through delegation chain
+- IP connectivity verified with ping
+
