@@ -1,0 +1,22 @@
+$TTL    20
+@       IN      SOA     milk.danune.cb. admin.danune.cb. (
+                              3         ; Serial
+                         300         ; Refresh (5 MINUTOS)
+                          60         ; Retry (1 minuto)
+                        86400         ; Expire (1 dia)
+                            20 )      ; Negative Cache TTL
+
+; Name Servers
+@       IN      NS      milk.danune.cb.
+
+; A Records
+milk    IN      A       172.18.0.3
+cliente IN      A       172.18.0.5
+servidor IN     A       172.18.0.4
+iogurte IN      A       172.18.0.6
+
+; AAAA Records - IPv6
+milk6   IN      AAAA    ::1
+client6 IN      AAAA    ::1
+servidor6 IN    AAAA    ::1
+iogurte6 IN     AAAA    ::1
