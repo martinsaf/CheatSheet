@@ -1,5 +1,5 @@
 zone "danune.cb" {
   type slave;
   file "/var/cache/bind/db.danune.cb";
-  masters { 172.18.0.3; };
+  masters { 172.18.0.3; }; // Primary of subdomain
 };
