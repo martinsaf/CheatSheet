@@ -9,6 +9,19 @@
 - `apt update && apt upgrade` — Update system
 - `<command> | ccze -A` — Colorize output
 
+### **Graphical Access to System Files**
+```bash
+# Open file manager as administrator
+nautilus admin:///path/to/folder
+
+# Practical examples:
+nautilus admin:///etc/apache2
+nautitus admin:///var/www
+nautilus admin:///etc/ssh
+
+# ⚠️ CAUTION: May cause terminal to hang
+# Solution: run in background
+nautilus admin:///etc/apache2/sites-available &
 ---
 
 # 2. 📑 Journalctl (Systemd Logs)
@@ -243,3 +256,19 @@ systemctl --failed
 watch -n 2 'ps aux | head -20' # View processes every 2s
 htop                           # Enhanced top (if installed)
 ```
+
+---
+# 18. 🖱️ Graphical Interface & Admin
+```bash
+# Graphical administrative access
+nautilus admin:///path
+
+# More stable alternatives:
+sudo thunar /path      # Lightweight file manager
+sudo pcmanfm /path     # Another alternative
+sudo mc                # Midnight Commander (terminal)
+
+# For hung processes:
+pkill nautilus         # Kill nautilus processes
+```
+
