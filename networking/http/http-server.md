@@ -127,3 +127,34 @@ service apache2 status
 tail -f /var/log/apache2/error.log
 ```
 
+### 3e) Test from Client Browser
+**Question**: "What page is displayed when accessing http://xpto.cb?"
+**Answer**: Custom personalized page: `<h1>Meu Site xpto.cb</h1>`
+```bash
+wget -q -O - http://www.xpto.cb
+
+# after 3g):
+# Output: <h1>Meu Site xpto.cb</h1>
+```
+
+### 3f) Find Document Root
+```bash
+grep -r "DocumentRoot" /etc/apache2/
+# Found: /var/www/html
+```
+
+### 3g) Customize Default Page
+```bash
+echo "<h1>Meu Site xpto.cb</h1>" > /var/www/html/index.html
+```
+
+### 3h) Create /teste Directory
+```bash
+# Create directory in DocumentRoot (not in /etc/apache2/)
+mkdir /var/www/html/teste
+echo "<h1>Pagina de Teste</h1>" > /var/www/html/teste/index.html
+
+# Test access
+wget -q -O - http://www.xpto.cb/teste/
+# Expected: "<h1>Pagina de Teste</h1>"
+```
