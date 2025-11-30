@@ -22,6 +22,7 @@ nautilus admin:///etc/ssh
 # ⚠️ CAUTION: May cause terminal to hang
 # Solution: run in background
 nautilus admin:///etc/apache2/sites-available &
+```
 ---
 
 # 2. 📑 Journalctl (Systemd Logs)
