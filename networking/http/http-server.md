@@ -99,3 +99,31 @@ nslookup www.xpto.cb
 ping www.xpto.cb
 # Expected: successful ping to 172.18.0.2
 ```
+
+## Exercise 3: Apache Installation & Basic Configuration
+
+### 3b) Install Apache Web Server
+```bash
+# Install Apache on dns-primary
+apt update && apt install -y apache2
+```
+
+### 3c) Verify Service Status
+```bash
+# Restart and check Apache service
+service apache2 restart
+service apache2 status
+
+# Expected output: "Active: active (running)"
+# Expected: Service starts with warning (normal behavior from `service apache2 start`)
+# Warning: "Could not reliably determine the server's FQDN"
+```
+
+### 3d) Apache Logs
+- **Access logs**: /var/log/apache2/access.log
+- **Error logs**: /var/log/apache2/error.log
+- **Check for startup errors**:
+```bash
+tail -f /var/log/apache2/error.log
+```
+
