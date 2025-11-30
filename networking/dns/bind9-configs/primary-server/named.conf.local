@@ -4,6 +4,6 @@
 zone "cb" {
     type master;
     file "/etc/bind/db.cb";
-    allow-transfer { 172.18.0.3; }; // Secondary server
+    allow-transfer { 172.18.0.4; }; // Secondary server
     notify yes;
 };
