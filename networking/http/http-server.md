@@ -17,14 +17,6 @@ Configure Apache server with Virtual Hosts, authentication, and integrated DNS.
 - [ ] 6. IPv6 Virtual Hosts
 - [ ] 7. Advanced configurations
 
-## Useful Commands
-```bash
-# Test Virtual Host
-curl -H "Host: madeira.xpto.cb" http://172.18.0.2
-
-# View Apache logs
-tail -f /var/log/apache2/error.l
-```
 ### **2. `http/apache-configs/`**
 ```text
 apache-configs/
@@ -39,38 +31,6 @@ apache-configs/
 ├── Dockerfile.apache-dns
 └── docker-compose.yml
 ```
-
-### **3. `http/docker-setup.md`**
-
-# 🐳 Docker configuration for Apache + DNS
-
-## Containers
-- Reuse existing network (172.18.0.0/24)
-- Server: Apache2 + Bind9 in the same container
-- Client: Ubuntu with testing tools
-
-## Deploy Commands
-```bash
-docker build -t apache-dns .
-docker run -d --network dns-network --ip 172.18.0.2 apache-dns
-```
-
-### **4. `networking/README.md`** (Index)
-
-# 🌐 Practical Network Work
-
-## 📚 Laboratories
-
-### DNS Bind9
-- [DNS server configuration](dns/bind9-lab.md)
-- Troubleshooting: [dns/troubleshooting.md](dns/troubleshooting.md)
-
-### Apache Web Server  
-- [Apache + Virtual Hosts Configuration](http/http-server.md)
-- [Docker Setup](http/docker-setup.md)
-
-## 🛠️ Common Tools
-- `dig`, `nslookup`, `curl`, `apache2ctl`
 
 ## Exercise 2: DNS Configuration
 
