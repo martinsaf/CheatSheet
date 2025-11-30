@@ -71,3 +71,40 @@ docker run -d --network dns-network --ip 172.18.0.2 apache-dns
 
 ## 🛠️ Common Tools
 - `dig`, `nslookup`, `curl`, `apache2ctl`
+
+## Exercise 2: DNS Configuration
+
+### ✅ 2a) DNS Service for xpto.cb domain
+- **BIND9 already installed** on dns-primary (172.18.0.2)
+- **Created zone file:** `/etc/bind/db.xpto.cb`
+- **Added to configuration:** `/etc/bind/named.conf.local`
+
+#### Zone File Content:
+```bind
+; /etc/bind/db.xpto.cb
+@       IN      SOA     dns.xpto.cb. admin.xpto.cb. (
+                              1         ; Serial
+                         600         ; Refresh
+                          60         ; Retry
+                        86400         ; Expire
+                            20 )      ; Negative Cache TTL
+
+; Name Servers
+@       IN      NS      dns.xpto.cb.
+
+; A Records  
+@       IN      A       172.18.0.2
+dns     IN      A       172.18.0.2
+www     IN      A       172.18.0.2
+
+; AAAA Records (IPv6)
+www6    IN      AAAA    ::1
+```
+
+#### Verification:
+```bash
+named-checkzone xpto.cb /etc/bind/db.xpto.cb
+service bind9 restart
+```
+
+---
