@@ -15,4 +15,4 @@ dns     IN      A       172.18.0.2
 
 ; Subdomain Delegation - DANUNE.CB
 danune  IN      NS      milk.danune.cb.
-milk.danune IN  A       172.18.0.3
+milk.danune IN  A       172.18.0.3      ; Glue record for SUBDOMAIN
