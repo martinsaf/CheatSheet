@@ -107,7 +107,7 @@ named-checkzone xpto.cb /etc/bind/db.xpto.cb
 service bind9 restart
 ```
 
-## 2b) The server must have the names 'dns.xpto.cb' and 'www.xpto.cb' associated with the server's IPv4 address and 'www6.xpto.cb' associated with the server's IPv6 address.
+### 2b) The server must have the names 'dns.xpto.cb' and 'www.xpto.cb' associated with the server's IPv4 address and 'www6.xpto.cb' associated with the server's IPv6 address.
 
 #### Add to named.conf.local
 
@@ -123,13 +123,13 @@ Zone file now contains:
 - `www.xpto.cb` → 172.18.0.2 ✅  
 - `www6.xpto.cb` → ::1 (placeholder IPv6) ✅
 
-## 2c) Client DNS Configuration
+### 2c) Client DNS Configuration
 ```bash
 # Configure client to use custom DNS
 echo "nameserver 172.18.0.2" > /etc/resolv.conf
 ```
 
-## 2d) Connectivity Testing
+### 2d) Connectivity Testing
 ```bash
 # Test DNS resolution
 nslookup www.xpto.cb
