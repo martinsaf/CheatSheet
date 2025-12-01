@@ -200,5 +200,35 @@ wget -q -O - http://castelobranco.xpto.cb # <h1>Meu Site xpto.cb</h1>
 
 **Conclusion**: This demonstrates the need for name-based virtual hosts to serve different content for different domain names pointing to the same server.
 
+### 4c) Create Name-based Virtual Hosts
 
+#### Create Document Roots:
+```bash
+mkdir -p /var/www/madeira
+mkdir -p /var/www/castelobranco
 
+echo '<h1>Bem-vindo a Madeira!'</h1>' > /var/www/madeira/index.html
+echo '<h1>Bem-vindo a Castelo Branco!</h1>' > /var/www/castelobranco/index.html
+```
+
+#####**Virtual Host Configuration Files**:
+**madeira.xpto.cb.conf**:
+```apache
+<VirtualHost *:80>
+  ServerName madeira.xpto.cb
+  DocumentRoot /var/www/madeira
+</VirtualHost>
+```
+**castelobranco.xpto.cb.conf**:
+```apache
+<VirtualHost *:80>
+  ServerName castelobranco.xpto.cb
+  DocumentRoot /var/www/castelobranco
+</VirtualHost>
+```
+**Enable Virtual Hosts**:
+```bash
+a2ensite madeira.xpto.cb.conf
+a2ensite castelobranco.xpto.cb.conf
+service apache2 reload
+```
