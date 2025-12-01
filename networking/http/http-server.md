@@ -270,3 +270,31 @@ wget -q -O - --user=joao --password=xpto123 http://castelobranco.xpto.cb
 ```
 **Success**: Entire `castelobranco.xpto.cb` site now requires HTTP Basic Authentication.
 
+### 5b) Multiple User Authentication
+
+#### Add Additional Users:
+```bash
+# Add user 'maria' with password 'yujg'
+htpasswd /etc/htpasswd/.htpasswd maria
+
+# Add user 'miguel' with password 'mikesry'
+htpasswd /etc/htpasswd/.htpasswd miguel
+```
+
+**Test All Users**:
+```bash
+# User joao:
+wget -q -O - --user=joao --password=xpto123 http://castelobranco.xpto.cb
+# <h1>Bem-vindo a Castelo Branco!</h1>
+
+#User maria:
+wget -q -O - --user=maria --password=yujg http://castelobranco.xpto.cb
+# <h1>Bem-vindo a Castelo Branco!</h1>
+
+# User miguel:
+wget -q -O - --user=miguel --password=mikesry http://castelobranco.xpto.cb
+# <h1>Bem-vindo a Castelo Branco!</h1>
+```
+**Success**: Three users (joao, maria, miguel) can now authenticate and access `castelobranco.xpto.cb`.
+**Note**: `Require valid-user` directive automatically allows any valid user in the password file.
+
