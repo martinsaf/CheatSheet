@@ -150,7 +150,7 @@ echo "<h1>Meu Site xpto.cb</h1>" > /var/www/html/index.html
 
 ### 3h) Create /teste Directory
 ```bash
-# Create directory in DocumentRoot (not in /etc/apache2/)
+# Create directory in DocumentRoot (Web content goes in `/var/www/html/`, configuration in `/etc/apache2/`)
 mkdir /var/www/html/teste
 echo "<h1>Pagina de Teste</h1>" > /var/www/html/teste/index.html
 
