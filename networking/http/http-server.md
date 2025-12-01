@@ -158,3 +158,30 @@ echo "<h1>Pagina de Teste</h1>" > /var/www/html/teste/index.html
 wget -q -O - http://www.xpto.cb/teste/
 # Expected: "<h1>Pagina de Teste</h1>"
 ```
+
+## Exercise 4: Name-based Virtual Hosts
+
+### 4a) Add DNS Records for New Virtual Hosts
+Add new A records to `/etc/bind/db.xpto.cb`:
+```bind
+madeira        IN       172.18.0.2
+castelobranco  IN       172.18.0.2
+```
+#### Importante: Increase Serial Number
+```bind
+@       IN      SOA     dns.cb. admin.cb. (
+                              2         ; Serial increased from 1 to 2
+```
+
+#### Verification:
+```bash
+named-checkzone xpto.cb /etc/bind/db.xpto.cb
+service bind9 restart
+
+# DNS resolution
+nslookup madeira.xpto.cb
+# Expected: 172.18.0.2
+```
+
+
+
