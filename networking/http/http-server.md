@@ -232,3 +232,17 @@ a2ensite madeira.xpto.cb.conf
 a2ensite castelobranco.xpto.cb.conf
 service apache2 reload
 ```
+
+### 4d) Test Virtual Hosts Functionality
+**Test Results**:
+```bash
+wget -q -O - http://www.xpto.cb
+# <h1>Meu Site xpto.cb</h1> (default site)
+
+wget -q -O - http://madeira.xpto.cb
+# <h1>Bem-vindo a Madeira!</h1> (madeira virtual host)
+
+wget -q -O - http://castelobranco.xpto.cb
+# <h1>Bem-vindo a Castelo Branco!</h1> (castelobranco virutal host)
+```
+**Conclusion**: Name-based virtual hosts are working correctly. Each domain now serves distinct content from its own DocumentRoot directory.
