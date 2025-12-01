@@ -246,3 +246,27 @@ wget -q -O - http://castelobranco.xpto.cb
 # <h1>Bem-vindo a Castelo Branco!</h1> (castelobranco virutal host)
 ```
 **Conclusion**: Name-based virtual hosts are working correctly. Each domain now serves distinct content from its own DocumentRoot directory.
+
+### 5a) Password Protect castelobranco.xpto.cb
+
+#### Configuration Applied:
+1. Created password file with `htpasswd`
+2. Added authentication directives to Virtual Host
+3. Apache configured to require valid use for entire site
+
+#### Test Results:
+```bash
+# Madeira site (no authentication required):
+wget -q -O - http://madeira.xpto.cb
+# <h1>Bem-vindo a Madeira!</h1>
+
+# Castelo Branco without credentials:
+wget -q -O - http://castelobranco.xpto.cb
+# No output (401 Authorization Required)
+
+# Castelo Branco with credentials:
+wget -q -O - --user=joao --password=xpto123 http://castelobranco.xpto.cb
+# <h1>Bem-vindo a Castelo Branco!</h1>
+```
+**Success**: Entire `castelobranco.xpto.cb` site now requires HTTP Basic Authentication.
+
