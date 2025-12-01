@@ -211,7 +211,7 @@ echo '<h1>Bem-vindo a Madeira!'</h1>' > /var/www/madeira/index.html
 echo '<h1>Bem-vindo a Castelo Branco!</h1>' > /var/www/castelobranco/index.html
 ```
 
-#####**Virtual Host Configuration Files**:
+##### **Virtual Host Configuration Files**:
 **madeira.xpto.cb.conf**:
 ```apache
 <VirtualHost *:80>
