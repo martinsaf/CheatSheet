@@ -183,5 +183,22 @@ nslookup madeira.xpto.cb
 # Expected: 172.18.0.2
 ```
 
+### 4b) Test and Analyze
+
+**Teste Execution:**
+```bash
+wget -q -O - http://www.xpto.cb           # <h1>Meu Site xpto.cb</h1>
+wget -q -O - http://madeira.xpto.cb       # <h1>Meu Site xpto.cb</h1>
+wget -q -O - http://castelobranco.xpto.cb # <h1>Meu Site xpto.cb</h1>
+```
+
+**Question**: "Are different pages shown? Why?"
+**Answer**: No, all three URLs show the same page beacause:
+1. DNS resolves all domains to the same IP address (172.18.0.2)
+2. Apache is configured with only one default Virtual host
+3. Without named-base virtual hosting, Apache serve the default DocumentRoot for all requests
+
+**Conclusion**: This demonstrates the need for name-based virtual hosts to serve different content for different domain names pointing to the same server.
+
 
 
