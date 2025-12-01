@@ -298,3 +298,30 @@ wget -q -O - --user=miguel --password=mikesry http://castelobranco.xpto.cb
 **Success**: Three users (joao, maria, miguel) can now authenticate and access `castelobranco.xpto.cb`.
 **Note**: `Require valid-user` directive automatically allows any valid user in the password file.
 
+### 5c) Directory-specific Authentication
+
+#### Configure Authentication Only for /teste Diretory:
+**Modified `/etc/apache2/sites-available/000-default.conf` (www.xpto.cb):**
+```apache
+<Directory "/var/www/html/teste">
+    AuthType Basic
+    AuthName "Acesso Restrito ao Teste"
+    AuthUserFile /etc/htpasswd/.htpasswd
+    Require valid-user
+</Directory>
+```
+**Test Results:**
+```bash
+# Main page (no authentication required):
+wget -q -O - http://www.xpto.cb
+# <h1>Meu Site xpto.cb</h1>
+
+# /teste directory without credentials:
+wget -q -O - http://www.xpto.cb/teste/
+# No output (401 Authorization Required)
+
+# /teste directory with credentials:
+wget -q -O - --user=joao --password=xpto123 http://www.xpto.cb/teste/
+# <h1>Pagina de Teste</h1>
+```
+**Successs**: Authentication now required only for `/teste` directory while main site remains publicly accessible.
