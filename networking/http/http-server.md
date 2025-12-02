@@ -325,3 +325,63 @@ wget -q -O - --user=joao --password=xpto123 http://www.xpto.cb/teste/
 # <h1>Pagina de Teste</h1>
 ```
 **Successs**: Authentication now required only for `/teste` directory while main site remains publicly accessible.
+
+## Exercise 6: IPv6 Virtual Hosts
+
+### 6a) Create IPv6 Virtual Host
+**Created `/etc/apache2/sites-available/www6.xpto.cb.conf`:**
+```apache
+<VirtualHost [::]:80>
+  ServerName www6.xpto.cb
+  DocumentRoot /var/www/html
+</VirtualHost>
+```
+
+**Key Differences from IPv4 Virtual Host**:
+- IPv4: `<VirtualHost *:80>`\
+- IPv6: `<VirtualHost [::]:80>`
+- **Note**: `[::]` is the IPv6 equivalent of * (all interfaces)
+
+### 6b) IPv6-only Accessibility
+**Configuration**: Virtual Host listens only on IPv6 interface.
+**Required System Configuration**:
+```bash
+# Edit Apache ports configuration
+vim /etc/apache2/ports.conf
+# Change from "Listen 80" to "Listen [::]:80" (IPv6 only)
+
+# Enable the virtual host
+a2ensite www6.xpto.cb.conf
+
+# Restart Apache
+service apache2 restart
+```
+
+**Verification**:
+```bash
+# Check listening ports
+ss -tulpn | grep :80
+# Output: tcp LISTEN :::80 (IPv6 only)
+# Note: After this change, Apache only listens on IPv6, not IPv4
+
+# Test configuration
+apache2ctl configtest
+# Expected: Syntax OK
+```
+
+#### ⚠️ Important Discovery
+**Apache IPv6 Support:** Unlike BIND9 DNS server, Apache does not have a separate `ipv6` module. IPv6 support is controlled directly in `/etc/apache2/ports.conf`:
+- `Listen 80` -> IPv4 only
+- `Listen [::]:80` -> IPv6 only
+- `Listen 80` and `Listen [::]:80` -> Both IPv4 and IPv6 (normal configuration)
+
+**Access Restriction Note:**
+The exercise requirement "only accessible via IPv6" is achieved by:
+1. Configuration VirtualHost to listen on `[::]:80` (IPv6 interface)
+2. Setting `port.conf` to `Listen [::]:80` only (no IPv4 listening)
+
+**Conseguence:** This configuration breaks IPv4 access to all sites on the server. In a production environment, you would typically listen on both IPv4 and IPv6, then use other methods (like firewall rules) to restrict specific virtual hosts.
+**Current State:** Exercise requirements met - www6.xpto.cb accessible via IPv6 only
+
+
+
