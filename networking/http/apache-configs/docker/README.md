@@ -104,4 +104,4 @@ docker exec -it client curl http://www.xpto.cb
 ## 📚 Related Documentation
 - [Apache Configuration](https://github.com/martinsaf/CheatSheet/blob/main/networking/dns/bind9-lab.md)
 - [Authentication Setup](https://github.com/martinsaf/CheatSheet/tree/main/networking/http/apache-configs/auth-configs)
-- [Main Lab Guide]([../http-server.md](https://github.com/martinsaf/CheatSheet/blob/main/networking/http/http-server.md))
+- [Main Lab Guide](https://github.com/martinsaf/CheatSheet/blob/main/networking/http/http-server.md)
