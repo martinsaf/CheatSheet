@@ -9,13 +9,13 @@ Configure Apache server with Virtual Hosts, authentication, and integrated DNS.
 - **Domain:** xpto.cb
 
 ## Exercises
-- [ ] 1. Basic preparation
-- [ ] 2. DNS configuration for xpto.cb
-- [ ] 3. Apache installation and configuration
-- [ ] 4. Name-based Virtual Hosts
-- [ ] 5. Basic HTTP authentication
-- [ ] 6. IPv6 Virtual Hosts
-- [ ] 7. Advanced configurations
+- [X] 1. Basic preparation
+- [X] 2. DNS configuration for xpto.cb
+- [X] 3. Apache installation and configuration
+- [X] 4. Name-based Virtual Hosts
+- [X] 5. Basic HTTP authentication
+- [X] 6. IPv6 Virtual Hosts
+- [X] 7. Advanced configurations
 
 ### **2. `http/apache-configs/`**
 ```text
@@ -164,8 +164,8 @@ wget -q -O - http://www.xpto.cb/teste/
 ### 4a) Add DNS Records for New Virtual Hosts
 Add new A records to `/etc/bind/db.xpto.cb`:
 ```bind
-madeira        IN       172.18.0.2
-castelobranco  IN       172.18.0.2
+madeira        IN  A       172.18.0.2
+castelobranco  IN  A       172.18.0.2
 ```
 #### Importante: Increase Serial Number
 ```bind
@@ -207,7 +207,7 @@ wget -q -O - http://castelobranco.xpto.cb # <h1>Meu Site xpto.cb</h1>
 mkdir -p /var/www/madeira
 mkdir -p /var/www/castelobranco
 
-echo '<h1>Bem-vindo a Madeira!'</h1>' > /var/www/madeira/index.html
+echo '<h1>Bem-vindo a Madeira!</h1>' > /var/www/madeira/index.html
 echo '<h1>Bem-vindo a Castelo Branco!</h1>' > /var/www/castelobranco/index.html
 ```
 
@@ -390,7 +390,7 @@ The exercise requirement "only accessible via IPv6" is achieved by:
 ```apache
 <VirtualHost *:80>
   ServerName madeira.xpto.cb
-  Redirect permanent / http:www.visitmadeira.pt
+  Redirect permanent / http://www.visitmadeira.pt
   # ... rest of configuration
 </VirtualHost>
 ```
