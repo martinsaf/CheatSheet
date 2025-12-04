@@ -1,6 +1,5 @@
 ## **📁 README.md para `virtual-hosts/`:**
 
-```markdown
 # 🌐 Apache Virtual Host Configurations
 
 This directory contains the actual Apache Virtual Host configuration files used in the practical lab.
