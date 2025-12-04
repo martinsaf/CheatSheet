@@ -92,9 +92,9 @@ sudo apache2ctl configtest
 - Error pages and redirects show Apache capabilities
 
 ## 🔗 Related Files
-- DNS configuration: See `networking/dns/bind9-lab.md` directory
-- Authentication files: See `networking/http/apache-configs/auth-configs` directory
-- Lab documentation: See `networking/http/http-server.md`
+- DNS configuration: See [networking/dns/bind9-lab.md](https://github.com/martinsaf/CheatSheet/blob/main/networking/dns/bind9-lab.md)
+- Authentication files: See [networking/http/apache-configs/auth-configs](https://github.com/martinsaf/CheatSheet/tree/main/networking/http/apache-configs/auth-configs) directory
+- Lab documentation: See [networking/http/http-server.md](https://github.com/martinsaf/CheatSheet/blob/main/networking/http/http-server.md)
 
 
 
