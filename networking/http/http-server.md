@@ -383,5 +383,34 @@ The exercise requirement "only accessible via IPv6" is achieved by:
 **Conseguence:** This configuration breaks IPv4 access to all sites on the server. In a production environment, you would typically listen on both IPv4 and IPv6, then use other methods (like firewall rules) to restrict specific virtual hosts.
 **Current State:** Exercise requirements met - www6.xpto.cb accessible via IPv6 only
 
+## Exercise 7: Advanced Configurations
+
+### 7a) Permanente Redirect Configuration
+**Modifier `/etc/apache2/sites-available/madeira.xpto.cb.conf`:**
+```apache
+<VirtualHost *:80>
+  ServerName madeira.xpto.cb
+  Redirect permanent / http:www.visitmadeira.pt
+  # ... rest of configuration
+</VirtualHost>
+```
+
+**Test Results:**
+```bash
+wget -S -q -O - http://madeira.xpto.cb 2>&1 | grep -E "HTTP|Location"
+# HTTP/1.1 301 Moved Permanently
+# Location: http://www.visitmadeira.pt
+```
+### 7b) Custom 404 Error Page
+**File:** `/var/www/html/404.html`
+**Content:** "Desculpe, mas deve estar enganado..."
+**Configuration:** `ErrorDocument 404 /404.html`
+
+### 7c) Custom 403 Error Page
+**File:** `/var/www/html/403.html`
+**Content:** "Nem penses!!!"
+**Configuration:** `ErrorDocument 403 /403.html`
+
+
 
 
