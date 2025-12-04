@@ -9,25 +9,16 @@ Authentication was implemented using **Apache Directory directives** in Virtual 
 - ✅ **Maintenance:** Easier to manage and audit
 - ✅ **Compliance:** Follows Apache best practices
 
-### Configuration Examples
+## Contents
 
-#### Directory Authentication (Used in this lab):
-```apache
-<Directory "/var/www/html/teste">
-    AuthType Basic
-    AuthName "Acesso Restrito ao Teste"
-    AuthUserFile /etc/htpasswd/.htpasswd
-    Require valid-user
-</Directory>
+### 1. [directory-auth-example.conf](directory-auth-example.conf)
+**ACTUAL IMPLEMENTATION** - The exact configuration used in Exercise 5c to protect the `/teste` directory.
 
-Creating/Managing Passwords:
-```bash
-# Create new user
-htpasswd -c /path/to/.htpasswd username
+### 2. [htaccess-example.htaccess](htaccess-example.htaccess)  
+**EXAMPLE** - Alternative .htaccess approach (not used, for comparison).
 
-# Add additional user
-htpasswd /path/to/.htpasswd anotheruser
+### 3. [.htpasswd](.htpasswd)
+Password file with three users (joao, maria, miguel).
 
-# Verify file
-cat /path/to/.htpasswd
-```
+## Key Learning
+The lab demonstrates the using `<Directory>` directives in Virtual Host configuration files instead of `.htaccess` files for better security and performance.
