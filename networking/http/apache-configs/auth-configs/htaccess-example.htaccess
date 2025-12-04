@@ -1,0 +1,43 @@
+# 🔍 ALTERNATIVE APPROACH: .htaccess file (NOT USED in this lab)
+# This shows how the same configuration would look using .htaccess
+# For educational purposes only
+
+AuthType Basic
+AuthName "Acesso Restrito ao Teste"
+AuthUserFile /etc/htpasswd/.htpasswd
+Require valid-user
+
+# ============================================================
+# .htaccess vs Directory Directive Comparison:
+# ============================================================
+# 
+# USING .htaccess (this file):
+# ------------------------------------------
+# Location: /var/www/html/teste/.htaccess
+# Requires: AllowOverride AuthConfig in main Apache config
+# Pros: 
+#   - Can be modified without restarting Apache
+#   - Useful when you don't have access to main config
+# Cons:
+#   - Slower (Apache checks for .htaccess on every request)
+#   - Less secure (file in web-accessible directory)
+#   - Harder to manage (configs scattered)
+#
+# USING DIRECTIVE (what we actually used):
+# ------------------------------------------
+# Location: /etc/apache2/sites-available/000-default.conf  
+# Pros:
+#   - Faster (no filesystem checks on every request)
+#   - More secure (config in protected directory)
+#   - Centralized management
+#   - Better for production environments
+# Cons:
+#   - Requires Apache restart for changes
+#   - Needs server configuration access
+#
+# ============================================================
+# LEARNING OUTCOME:
+# ============================================================
+# This lab demonstrates the industry-preferred approach of using
+# Directory directives in Virtual Host configuration files rather
+# than .htaccess files, following Apache security best practices.
