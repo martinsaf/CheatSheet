@@ -109,6 +109,103 @@ curl http://localhost:8080/teste1.html
 2. Or: `domain:localhost`
 3. Now I only see the request from my server (bottom information from request still says 1/2 requests).
 
+## Exercise 5 - Special Server Configurations
 
-   
+### Step 5a) Create subdirectories and test images
+Comands executed:
+```bash
+# Create directories
+mkdir -p var/www/html/{static,dynamic,hybrid}
+
+# Install ImageMagick for creating images
+apt update && apt install -y imagemagick
+
+# Create test images (100x100 pixels, different colors)
+convert -size 100x100 xc:red /var/www/html/static/static.jpg
+convert -size 100x100 xc:blue /var/www/html/dynamic/dynamic.jpg
+convert -size 100x100 xc:green /var/www/html/hybrid/hybrid.jpg
+
+# Verify files
+ls -la /var/www/html/hybrid/
+ls -la /var/www/html/dynamic/
+ls -la /var/www/html/static/
+```
+
+### Step 5b) Modify teste1.html to display images
+#### Upated teste1.html:
+```html
+<!doctype html>
+<html lang="pt">
+<head>
+        <meta charset="utf-8">
+        <title>Teste 1</title>
+</head>
+<body>
+        <h1>Testando...</h1>
+        <p>Modificando...</p>
+
+        <img src="static/static.jpg">
+        <img src="dynamic/dynamic.jpg">
+        <img src="hybrid/hybrid.jpg">
+</body>
+</html>
+```
+**Access URL:** `http://localhost:8080/teste1.html`
+
+### Step 5d) Test initial page load
+#### Execute in browser:
+1. Open `http://localhost:8080/teste1.html`
+2. Force full reload (Ctrl+F5)
+3. Observe Network tab in DevTools
+
+#### Expected results for 5d-i:
+**Total browser requests: 6**
+1. `teste1.html` (200 OK) - main HTML page
+2. `favicon.ico` (404 Not Found) - browser auto-request
+3. `static/static.jpg` (200 OK) - static image
+4. `dynamic/dynamic.jpg` (200 OK) - dynamic image
+5. `hybrid/hybrid.jpg` (200 OK) - hybrid image
+6. `content.css` (200 OK) - browser extension (external)
+
+#### Answer to 5d-i:
+**Number of requests:** 5 (to our server)
+
+### Step 5e) Results
+
+#### Step 5e-i) Analyze normal refresh (F5):
+**Requests observed: 6 (to Apache server)**
+1. `teste1.html`
+   - Request: Conditional with `If-Modified-Since`
+   - Status: **304 Not Modified** (cache valid)
+   - Cache status: Validated with server
+2. `content.css`
+   - Browser extension resource (external, not from our server)
+3. `static/static.jpg`, `dynamic/dynamic.jpg`, `hybrid/hybrid`
+   - Request: **Not present** in Network tab
+   - Status: **200 OK** (from memory cache) shown in browser
+   - Cache status: Loaded directlry from browsers memory cache
+  
+**Key finding:**
+- Only 1 HTTP request was made to our Apache server (`teste1.html`)
+- All 3 images were served from **browsers memory cache without cache** any without any network request
+- The browser displayed status "200 OK (from memory cache)" for each image
+
+#### Step 5e-ii) Status codes analysis:
+**Response received from server:**
+- `teste1.html`: **304 Not Modified** (conditional request successful)
+- Images: **No HTTP response** (served from memory cache)
+
+**Browser-reported status per resource:**
+- `teste1.html`: 304 Not Modified
+- `static/static.jpg`: 200 OK (from memory cache)
+- `dynamic/dynamic.jpg`: 200 OK (from memory cache)
+- `hybrid/hybrid.jpg`: 200 OK (from memory cache)
+
+**Technical explanation:**
+The browser employs a multi-level caching hierarchy:
+1. **Memory cache** (RAM, very fast) - Images were stored here from the previous Ctrl+F5
+2. **Disk cache** (persistent storage)
+3. **Network request** (HTTP) - Only triggered when cache is invalid/missing
+
+Since the images were recently loaded (within seconds), the browser served them directly from memory cache without making HTTP requests. This demonstrates how effective caching can eliminate network traffic for repeated resources.
 
