@@ -109,9 +109,10 @@ curl http://localhost:8080/teste1.html
 2. Or: `domain:localhost`
 3. Now I only see the request from my server (bottom information from request still says 1/2 requests).
 
+---
 ## Exercise 5 - Special Server Configurations
 
-### Step 5a) Create subdirectories and test images
+### Step 5a) and b) Create subdirectories and test images
 Comands executed:
 ```bash
 # Create directories
@@ -131,7 +132,7 @@ ls -la /var/www/html/dynamic/
 ls -la /var/www/html/static/
 ```
 
-### Step 5b) Modify teste1.html to display images
+### Step 5c) Modify teste1.html to display images
 #### Upated teste1.html:
 ```html
 <!doctype html>
@@ -152,7 +153,7 @@ ls -la /var/www/html/static/
 ```
 **Access URL:** `http://localhost:8080/teste1.html`
 
-### Step 5d) Test initial page load
+### Step 5d) Force full reload (Ctrl+F5)
 #### Execute in browser:
 1. Open `http://localhost:8080/teste1.html`
 2. Force full reload (Ctrl+F5)
@@ -170,7 +171,7 @@ ls -la /var/www/html/static/
 #### Answer to 5d-i:
 **Number of requests:** 5 (to our server)
 
-### Step 5e) Results
+### Step 5e) normal refresh (F5)
 
 #### Step 5e-i) Analyze normal refresh (F5):
 **Requests observed: 6 (to Apache server)**
@@ -208,4 +209,66 @@ The browser employs a multi-level caching hierarchy:
 3. **Network request** (HTTP) - Only triggered when cache is invalid/missing
 
 Since the images were recently loaded (within seconds), the browser served them directly from memory cache without making HTTP requests. This demonstrates how effective caching can eliminate network traffic for repeated resources.
+
+### Step 5f) Now configure the web server so that the contents of the dynamic folder can never be stored in the cache
+```apache
+<Location "/dynamic">
+  Header set Cache-Control "no-store"
+</Location>
+```
+```bash
+service apache2 reload
+```
+
+### Step 5f) Results - After Configuring `no-store` for /dynamic
+#### Test 5d repeated (Ctrl+F5 - Hard reload):
+**Response Headers Comparison:**
+| Resource | Cache-Control | Status | Observations |
+| - | - | - | - |
+| teste1.html | `public, max-age=3600` | 200 OK | Default cache (1 hour) |
+| static/static.jpg | `public, max-age=3600` | 200 OK | Default cache (1 hour) |
+| dynamic/dynamic.jpg | `no-store` | 200 OK | **NO CACHE CONFIGURED** |
+| hybrid/hybrid.jpg | `public, max-age=3600` | 200 OK | Default cache (1 hour)
+| favicon.ico | (none) | 404 Not Found | File doesnt exist |
+
+**Key Findings:**
+1. `dynamic/dynamic.jpg` successfully configured with `no-store`:
+   - Response header: `Cache-Control: no-store`
+   - Differente from other images: `public, max-age=3600`
+2. CTRL+F5 forces fresh download regardless:
+   - Browser request headers: `Cache-Control: no-cache`, `Pragma: no-cache`
+   - All resources return 200 OK with fresh content
+
+**Conclusion for CTRL+F5 test:**
+The `no-store` configuration is working correctly: The Apache server returns `Cache-Control: no-store` for resource is the `/dynamic` directly, while other directories retain their default caching bahavior.
+
+#### Test 5e repeated (Normal F5 Refresh)
+**Key Observation - Cache Behavior:**
+1. `teste1.html`:
+   - Status: 304 Not Modified
+   - Request: Conditional (with `If-Modified-Since`)\
+   - Cache: Validated with server
+2. `static/static.jpg`
+   - Status: 200 OK (from memory cache)
+   - No HTTP request made to server
+   - Cached successfully (`Cache-Control: public, max-age=3600`)
+3. `hybrid/hybrid.jpg`
+   - Status: 200 OK (from memory cache)
+   - No HTTP request made to server
+   - Cached successfully (`Cache-Control: public, max-age=3600`)
+4. `dynamic/dynamic.jpg`
+   - Status: 200 OK ⭐ No "from cache" indicator!
+   - HTTP request WAS MADE to server
+   - Response: `Cache-Control: no-store`
+   - Not cached - fresh request every time
+  
+**Proof `no-store` Configuration Works:**
+| Resource | Cache Status | HTTP Request Made? | Cache-Control Header |
+| - | - | - | - |
+| static.jpg | Cached (memory) | No | `public, max-age=3600` |
+| hybrid.jpg | Cached (memory) | No | `public, max-age=3600` |
+| dynamic.jpg | Not Cached | Yes | `no-store` |
+
+**Conclusion:**
+The `Cache-Control: no-store` directive successfully prevents any caching of `dynamic/dynamic.jpg`. While static and hybrid content benefit from caching (reducing server load), dynamic content is always fetched fresh from the server.
 
