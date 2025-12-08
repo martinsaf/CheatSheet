@@ -272,3 +272,48 @@ The `no-store` configuration is working correctly: The Apache server returns `Ca
 **Conclusion:**
 The `Cache-Control: no-store` directive successfully prevents any caching of `dynamic/dynamic.jpg`. While static and hybrid content benefit from caching (reducing server load), dynamic content is always fetched fresh from the server.
 
+
+### Exercise Step 5h) - Configure `/static` with 1-year Expires Header
+**Apache Configuration for `/static` directory:**
+```apache
+<Directory "/var/www/html/static">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 year"
+</Directory>
+```
+```bash
+service apache2 reload
+```
+
+**Verification Results:**
+`static/static.jpg` Reponse Headers:
+```text
+Cache-Control: public, max-age=3600
+Expires: Tue, 08 Dec 2026 07:44:32 GMT
+```
+
+**Analysis:**
+1. **Expires header configured correctly:**
+   - Current date: Mon, 08 Dec 2025 07:44:32 GMT
+   - Expires date: Tue, 08 Dec 2026 07:44:32 GMT
+   - Exactly 1 year difference
+2. ⚠️ **Cache-Control inconsistency:**
+   - Expected: `max-age=31536000` (seconds in 1 year)
+   - Actual: `max-age=3600` (1 hour) 
+   - Issue: Global cache configuration overriding directory setting
+  
+**Solution:**
+**Fix: Add explicit Cache-Control to directory config:**
+```apache
+<Directory "/var/www/html/static">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 year"
+    Header set Cache-Control "public, max-age=31536000"
+</Directory>
+```
+
+3. **After Solution:**
+   - Actual: `max-age=31536000` (1 year from access)
+
+**Conclusion:**
+Successfully implemented cache control at the directory level, demonstrating how Apache can be configured to optimize caching based on content type and update frequency. This reduces server load and improves performance while ensuring users receive up-to-date content when needed.
