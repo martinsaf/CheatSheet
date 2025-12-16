@@ -21,3 +21,15 @@ docker run -d --name client --network dns-lab --ip 172.18.0.5 ubuntu:16.04 tail 
 # On each server
 apt update && apt install -y bind9 bind9utils
 ```
+
+## 4. Install Text Editor (Optional but Recommended)
+
+```bash
+# Install nano (simpler for beginners)
+apt install -y nano
+
+# Or install vim (if preferred)
+apt install -y vim
+```
+
+**Note:** Run this command inside each container where you need to edit files.
