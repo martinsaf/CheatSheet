@@ -18,7 +18,7 @@ A DNS zone file consists of **records** with specific fields separated by whites
 | 4        | **TYPE**   | Record type (`SOA`, `NS`, `A`, etc.)            | `SOA`, `A`                       |
 | 5+       | **RDATA**  | Type-specific data                              | Ip address, hostname, parameters |
 
-### complete Zone File for Exercise 1a
+### Complete Zone File for Exercise 1a
 
 ```bind
 ; BIND9 Zone File for .cb domain
@@ -39,7 +39,29 @@ $TTL    20                      ; Global TTL: 20 seconds for all records
 dns IN  A   172.18.0.2
 ```
 
+```text
+NORMAL REGIST (NS/A):
+[NAME] [TTL] CLASS TYPE RDATA-simple
+   ↓     ↓     ↓     ↓       ↓
+   @     -    IN    NS    dns.cb.
+
+SOA REGIST (SPECIAL):
+[NAME] [TTL] CLASS TYPE RDATA-complex
+   ↓     ↓     ↓     ↓       ↓
+   @     -    IN    SOA   dns.cb. admin.cb. ( SERIAL REFRESH RETRY EXPIRE MINIMUM )
+```
+
 ## Record Breakdown
+
+### Quick Reference: DNS Record Fields
+
+| Field | Meaning                            | Example in `db.cb`            |
+| ----- | ---------------------------------- | ----------------------------- |
+| `@`   | Zone apex (the domain itself)      | `@ IN NS dns.cb.`             |
+| `IN`  | Internet class (always this)       | `IN`                          |
+| `SOA` | Start of Authority (zone metadata) | `SOA dns.cb. admin.cb. (...)` |
+| `NS`  | Name Server (authoritative server) | `NS dns.cb.`                  |
+| `A`   | Address record (IPv4)              | `A 172.18.0.2`                |
 
 ### 1. SOA (Start of Authority) Record
 
@@ -48,7 +70,7 @@ The SOA record defines the fundamental properties of the DNS zone:
 - **MNAME**: `dns.cb.` - Primary master name server for the zone
 - **RNAME**: `admin.cb` - Administrator email (format: `admin.cb.` = `admin@cb`)
 - **SERIAL**: `1` - Zone version number (must increment after each change)
-- **REFRESH**: `600` - How ofter secondary servers should check for updates (10 minutes)
+- **REFRESH**: `600` - How often secondary servers should check for updates (10 minutes)
 - **RETRY**: `60` - Retry interval if refresh fails (1 minute)
 - **EXPIRE**: `86400` - Time before zone data is invalid if primary is unreachable (1 day)
 - **MINIMUM**: `20` - Minimum TTL for negative caching (20 seconds)
@@ -91,7 +113,13 @@ The SOA record defines the fundamental properties of the DNS zone:
 
 ## Associated Configuration Files
 
-**`/etc/bind/named.conf.local`**
+### **`/etc/bind/named.conf.local`**
+
+This file **declares** zones to the BIND9 service. Each `zone` block tells BIND:
+
+- **`cb`**: The domain name to be authoritative for
+- **`type master;`**: This server is the primary (master) for the zone
+- **`file "/etc/bind/db.cb";`**: Path to the zone file containing DNS records
 
 ```bind
 zone "cb" {
@@ -99,6 +127,19 @@ zone "cb" {
     file "/etc/bind/db.cb";
 };
 ```
+
+**Why Its Needed:**
+
+- BIND9 doesnt automatically load all `.db` files in `/etc/bind/`
+- Each zone must be explicity declared
+- The `zone` name must match your domain (`"cb"` = `.cb`)
+
+**Key Concepts:**
+
+- `zone "cb"` = Declares authority for the `.cb` domain
+- `type master` = This is the primary/authoritative server
+- `file` directive = Points to the actual zone data (`db.cb`)
+- The zone name **must match** the domain in your zone file
 
 ### Testing Commands
 
@@ -121,3 +162,177 @@ ping dns.cb
 ---
 
 **Key Takeway**: The SOA defines zone parameters, NS declares authority, and A provides the essential IP mapping. All three are required for a functional DNS zone.
+
+---
+
+## Exercise-by-Exercise Implementation
+
+### Exercise 1a: Configure Primary Server with Timeouts
+
+**Objective:** Create a basic zone file with specified timeouts.
+
+**Configuration (`db.cb` lines 1-7):**
+
+```bind
+$TTL 20
+@ IN SOA dns.cb. admin.cb. (
+   1     ; Serial (starts at 1)
+   600   ; Refresh = 10 minutes (600 seconds)
+   60    ; Retry = 1 minute (60 seconds)
+   86400 ; Expire = 1 day (86400 seconds)
+   20    ; Minimum TTL = 20 seconds
+)
+```
+
+**Key Points:**
+
+- Time values must be converted to seconds
+- Serial starts at 1 and must increment with changes
+- Minimum TTL in SOA is for negative caching
+
+### Exercise 1b: Add A Record for dns.cb
+
+**Objective:** Map the name server to its IP address.
+**Configuration (`db.cb` line 9):**
+
+```bind
+dns IN A 172.18.0.2
+```
+
+**Why This Matters:**
+
+- Without this "glue record", the NS declaration is unresolvable
+- Creates the host `dns.cb` -> `172.18.0.2`
+
+### Exercise 1c: Configure Client DNS
+
+**Objective:** Point client to our DNS server.
+
+**Command on client:**
+
+```bash
+echo "nameserver 172.18.0.2" > /etc/resolv.conf
+```
+
+### Exercise 1d/1e: Testing
+
+**Successful test (1d):**
+
+```bash
+nslookup dns.cb 172.18.0.2 # Returns 172.18.0.2
+ping dns.cb                # Should work
+```
+
+**Expected failure (1e):**
+
+```bash
+ping client.danune.cb      # Should fail - subdomain not configured yet
+```
+
+### Exercise 2a: Subdomain Delegation
+
+**Objective:** Delegate `danune.cb` to another server.
+**Configuration (`db.cb` lines 6-7):**
+
+```bind
+danune IN NS milk.danune.cb.
+milk.danune.cb. IN A 172.18.0.3
+```
+
+**Critical Details:**
+
+- Two records required: NS (Who manages) + A (where they are)
+- `milk.danune.cb.` needs trailing dot (absolute name)
+- Delegation happens at the subdomain level (`danune` not `@`)
+
+---
+
+## Complete `db.cb` File (After Exercise 2a)
+
+```bind
+; BIND9 Zone File for .cb domain
+$TTL 20
+@ IN SOA dns.cb. admin.cb. (4 600 60 86400 20)
+
+@ IN NS dns.cb.
+danune IN NS milk.danune.cb.
+
+dns IN A 172.18.0.2
+milk.danune.cb. IN A 172.18.0.3
+```
+
+**Serial Note:** Serial _can be_ 4 after multiple test iterations.
+
+---
+
+# Subdomain DNS Configuration (danune.cb)
+
+## Overview
+
+This directory contains configuration files for the **subdomain DNS server** responsible for the `danune.cb` domain.
+
+## Core Configuration File: `/etc/bind/db.danune.cb`
+
+### Complete Zone File (Exercises 2b + 2c)
+
+```bind
+; BIND9 Zone File for danune.cb subdomain
+$TTL 20  ; Global TTL: 20 seconds
+
+; Start of Authority - Exercise 2b
+@ IN SOA milk.danune.cb. admin.danune.cb. ( 1, 5M, 1M, 1D, 20)
+
+; Name Server Record
+@ IN NS milk.danune.cb
+
+; Address Records - Exercise 2c
+milk     IN A 172.18.0.3   ; Subdomain DNS server itself
+client   IN A 172.18.0.5   ; Test client
+servidor IN A 172.18.0.4   ; Secondary DNS server
+
+; IPV6 Records - Exercise 2d (placeholder)
+milk6       IN AAAA  ::1
+cliente6    IN AAAA  ::1
+servidor6   IN AAAA  ::1
+```
+
+### Key Differences from Primary Zone (.cb)
+
+| Aspect    | Primary (.cb)     | Subdomain (danune.cb)     |
+| --------- | ----------------- | ------------------------- |
+| Zone Name | `cb`              | `danune.cb`               |
+| SOA MNAME | `dns.cb`          | `milk.danune.cb`          |
+| Refresh   | 10 minutes (600s) | 5 minutes (5M/300s)       |
+| NS Record | `@ IN NS dns.sb.` | `@ IN NS milk.danune.cb.` |
+
+### Time Format Notes
+
+BIND9 accepts human-readable time formats.
+
+### Associated Configuration Files
+
+`/etc/bind/named.conf.local`
+
+```bind
+zone "danune.cb" {
+   type master;
+   file "/etc/bind/db.danune.cb";
+}
+```
+
+### Testing Commands
+
+```bash
+# Check zone file syntax
+named-checkzone danune.cb /etc/bind/db.danune.cb
+
+# Test from client (after delegation is configured)
+nslookup cliente.danune.cb 172.18.0.2 # Should return 172.18.0.5
+nslookup servidor.danune.cb 172.18.0.2 # Shoudl return 172.18.0.4
+```
+
+### Common Issues
+
+- "SERVFAIL" error: Ensure delegation is properly configured in primary servers `db.cb`
+- No response: Verify BIND9 service is running on subdomain server
+- NXDOMAIN for milk.danune.cb: Check glue record exists in primary zone
