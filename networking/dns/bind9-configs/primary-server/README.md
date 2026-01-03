@@ -226,7 +226,7 @@ ping dns.cb                # Should work
 **Expected failure (1e):**
 
 ```bash
-ping client.danune.cb      # Should fail - subdomain not configured yet
+ping cliente.danune.cb      # Should fail - subdomain not configured yet
 ```
 
 ### Exercise 2a: Subdomain Delegation
@@ -280,14 +280,14 @@ This directory contains configuration files for the **subdomain DNS server** res
 $TTL 20  ; Global TTL: 20 seconds
 
 ; Start of Authority - Exercise 2b
-@ IN SOA milk.danune.cb. admin.danune.cb. ( 1, 5M, 1M, 1D, 20)
+@ IN SOA milk.danune.cb. admin.danune.cb. (1 5M 1M 1D 20)
 
 ; Name Server Record
-@ IN NS milk.danune.cb
+@ IN NS milk.danune.cb.
 
 ; Address Records - Exercise 2c
 milk     IN A 172.18.0.3   ; Subdomain DNS server itself
-client   IN A 172.18.0.5   ; Test client
+cliente   IN A 172.18.0.5   ; Test client
 servidor IN A 172.18.0.4   ; Secondary DNS server
 
 ; IPV6 Records - Exercise 2d (placeholder)
@@ -295,6 +295,20 @@ milk6       IN AAAA  ::1
 cliente6    IN AAAA  ::1
 servidor6   IN AAAA  ::1
 ```
+
+#### IPv4 & IPv6 Tests
+
+```bash
+ping -c 2 cliente.danune.cb
+ping -c 2 servidor.danune.cb
+ping -c 2 milk.danune.cb
+
+ping6 -c 2 cliente6.danune.cb
+ping6 -c 2 servidor6.danune.cb
+ping6 -c 2 milk6.danune.cb
+```
+
+The DNS delegation chain is fully functional. IPv6 records are configured but use placeholder addresses (`::1`) as specified in the exercise.
 
 ### Key Differences from Primary Zone (.cb)
 
@@ -317,7 +331,7 @@ BIND9 accepts human-readable time formats.
 zone "danune.cb" {
    type master;
    file "/etc/bind/db.danune.cb";
-}
+};
 ```
 
 ### Testing Commands
@@ -336,3 +350,122 @@ nslookup servidor.danune.cb 172.18.0.2 # Shoudl return 172.18.0.4
 - "SERVFAIL" error: Ensure delegation is properly configured in primary servers `db.cb`
 - No response: Verify BIND9 service is running on subdomain server
 - NXDOMAIN for milk.danune.cb: Check glue record exists in primary zone
+
+---
+
+# Secondary DNS Configuration (danune.cb)
+
+## Overview
+This directory contains configuration files for the secondary (slave) DNS server that provides redundancy for the `danune.cb` domain.
+
+## Core Configuration File: `/etc/bind/named.conf.local`
+
+### Slave Zone Declaration
+Unlike primary servers, secondary servers declare zone as `slave` type and specify the primary servers IP address:
+```bind
+zone "danune.cb" {
+   type slave;
+   file "var/cache/bind/db.danune.cb";
+   masters { 172.18.0.3; };
+};
+```
+
+### Key Configuration Points
+- `type slave`: Server receives zone data via automatic transfers
+- `file`: Located in `/var/cache/bind/` (not `/etc/bind/`) / BIND writes here automatically
+- `masters`: IP of the primary authoritative server for this zone
+- **NO manual zone file creation:** The `db.danune.cb` file is automatically created after zone transfer
+
+## Exercise-by-Exercise Implementation
+
+### Exercise 3a: Configure Secondary Server
+**Objective**: Set up slave server for automatic zone transfers.
+
+**Configuration (`/etc/bind/named.conf.local`):**
+```bind
+zone "danune.cb" {
+   type slave;
+   file "/var/cache/bind/db.danune/cb";
+   masters { 172.18.0.3; };
+};
+```
+
+**Verification Commands:**
+```bash
+# Check configuration syntax
+named-checkconf /etc/bind/named.conf.local
+
+# Restart BIND9
+service bind9 restart
+
+# Check if zone file was transferred (after 1-2 minutes)
+ls -la /var/cache/bind/
+```
+
+### Exercise 3b: Verify Automatic Zone Transfer
+**Objective**: Confirm zone data is replicated from primary.
+
+**Verification Steps:**
+1. Wait 1-2 minutes after configuration the slave
+2. Check if zone file appears in cache:
+```bash
+ls -la /var/cache/bind/ 
+```
+3. Test DNS resolution locally:
+```bash
+nslookup cliente.danune.cb 127.0.0.1
+```
+
+**Expected Result:** The slave server should successfully resolve queries for the `danune.cb` domain.
+
+### Exercise 3c: Add Record to Primary and Increment Serial
+**Objective:** Modify primary zone and verify propagation.
+
+**On Primary Server (`dns-subdomain`):**
+1. Edit `/etc/bind/db.danune.cb`
+2. Add new A record and increment serial:
+; Before: serial = 2
+; After: serial = 3
+iogurte IN A 172.18.0.6
+3. Restart BIND9 on primary
+
+### Exercise 3d: Verify Automatic Replication
+**Objective:** Confirm changes propagate to secondary.
+**On Secondary Server:**
+```bash
+# Wait for automatic transfer (1-2 minutes)
+# Then test:
+nslookup iogurte.danune.cb 127.0.0.1 
+```
+
+**Success Criteria**: Secondary resolves the new `iogurte.danune.cb` record without manual intervention.
+
+### Exercise 3e: Failover Testing
+**Objective**: Demonstrate high availability when primary fails.
+**Test Procedure**:
+1. Stop primary server:
+```bash
+# On dns-subdomain
+docker stop dns-subdomain
+```
+
+2. Configure client to use secondary DNS:
+```bash
+# On client container
+echo "nameserver 172.18.0.4" > /etc/resolv.conf
+```
+
+3. Test DNS resolution:
+```bash
+nslookup iogurte.danune.cb 172.18.0.4 
+```
+
+3. Restore primary (after testing):
+```bash
+docker start dns-subdomain
+echo "nameserver 172.18.0.2" > /etc/resolv.conf
+```
+
+---
+
+**Key Takeaway:** Secondary DNS servers provide redundancy through automatic zone transfers. The slave configuration is simpler than master configuration but requires proper network connectivity and serial number management on the primary server.
