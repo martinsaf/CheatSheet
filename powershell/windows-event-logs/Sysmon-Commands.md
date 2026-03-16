@@ -1,4 +1,4 @@
-# Symon-Commands.ps1
+﻿# Symon-Commands.ps1
 # Useful Sysmon Event Log Analysis Commands
 # Source: TryHackMe - Sysmon Room
 
@@ -59,3 +59,4 @@ Get-WinEvent -Path ".\Investigation-1.evtx" | Where-Object { $_.Id -eq 1 } | Sel
 
 # Find suspicious registry modifications
 Get-WinEvent -Path ".\Investigation-3.1evtx" | Where-Object { $_.Id -in @(12,13,14) } | Format-List Message
+

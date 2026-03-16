@@ -1,4 +1,4 @@
-# -------------------------------
+﻿# -------------------------------
 # XPath Filtering
 # -------------------------------
 # Description: Filtering event logs using XPath queries.
@@ -26,3 +26,4 @@ Get-WinEvent -LogName Application -FilterXPath '*/System/Provider[@Name="WLMS"] 
 
 # Filter Security events where TargetUserName equals "Sam" and EventID is 4720 (User account creation)
 Get-WinEvent -LogName Security -FilterXPath '*/EventData/Data[@Name="TargetUserName"]="Sam" and */System/EventID=4720'
+

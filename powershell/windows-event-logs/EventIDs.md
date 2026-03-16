@@ -1,4 +1,4 @@
-# -------------------------------
+﻿# -------------------------------
 # Windows Event IDs - Quick Reference
 # -------------------------------
 # Description: Common Event IDs for monitoring & hunting
@@ -67,3 +67,4 @@ Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -FilterXPath '*
 
 # 4104 - Script block logging
 Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" -FilterXPath '*/System/EventID=4104'
+

@@ -1,4 +1,4 @@
-# Get-WinEvent.ps1
+﻿# Get-WinEvent.ps1
 # Useful Get-WinEvent Command Cheat Sheet
 # Source: TryHackMe - Windows Event Logs (Task 4)
 # Description: PowerShell cmdlet to get events from event logs and ETL files on local/remote computers.
@@ -62,5 +62,6 @@ Get-WinEvent -ListProvider * 2>$null |
 # It lists all event IDs and descriptions defined by the Microsoft-Windows-PowerShell provider, and then counts the total number of resulting rows.
 (Get-WinEvent -ListProvider Microsoft-Windows-PowerShell).Events |
     Format-Table Id, Description | Measure-Object
+
 
 

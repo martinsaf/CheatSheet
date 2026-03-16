@@ -1,4 +1,4 @@
-# Wevtutil.ps1
+﻿# Wevtutil.ps1
 # Useful wevtutil.exe Command Cheat Sheet
 # Source: TryHackMe - Windows Event Logs (Task 3)
 # Description: Command-line tool for managing Windows event logs.
@@ -57,4 +57,5 @@ wevtutil qe Security /q:"*[System[(Level=2)]]" /f:text
 
 # Query last 3 events from Application log, reverse order, in text format
 wevtutil qe Application /c:3 /rd:true /f:text
+
 
