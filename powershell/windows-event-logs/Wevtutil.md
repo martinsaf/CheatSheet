@@ -1,61 +1,55 @@
-﻿# Wevtutil.ps1
-# Useful wevtutil.exe Command Cheat Sheet
-# Source: TryHackMe - Windows Event Logs (Task 3)
-# Description: Command-line tool for managing Windows event logs.
+﻿# Wevtutil.exe - Command Cheat Sheet 🛠️
 
-# -------------------------------
-# General Help
-# -------------------------------
-# Official Documentation: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
-# Show help
-wevtutil.exe /?
+Command-line tool for managing Windows event logs.
 
-# Show detailed help for the 'query events' command
-wevtutil qe /?
+**Documentation:** [Microsoft Docs](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil)
 
-# -------------------------------
-# Logs Management
-# -------------------------------
+---
 
-# List all available logs
-wevtutil el
+## General Help
 
-# Get configuration details for a specific log (e.g., Security)
-wevtutil gl "Security"
+| Task | Command |
+| :--- | :--- |
+| **Show general help** | `wevtutil.exe /?` |
+| **Show query events help** | `wevtutil qe /?` |
 
-# Export a log to an EVTX file (e.g., Security log to C:\Temp\Security.evtx)
-wevtutil epl Security "C:\Temp\Security.evtx"
+---
 
-# Clear a specific log (e.g., Security)
-wevtutil cl Security
+## Logs Management
 
-# Count all event log names
-wevtutil el | Measure-Object | Select-Object -ExpandProperty Count
+| Task | Command |
+| :--- | :--- |
+| **List all logs** | `wevtutil el` |
+| **Get log configuration** | `wevtutil gl "Security"` |
+| **Export log to EVTX** | `wevtutil epl Security "C:\Temp\Security.evtx"` |
+| **Clear a log** | `wevtutil cl Security` |
+| **Count all logs** | `wevtutil el \| Measure-Object` |
 
-# -------------------------------
-# Publishers Management
-# -------------------------------
+---
 
-# List all event publishers
-wevtutil ep
+## Publishers Management
 
-# Get details for a specific publisher (e.g., PowerShell)
-wevtutil gp "Microsoft-Windows-PowerShell"
+| Task | Command |
+| :--- | :--- |
+| **List all publishers** | `wevtutil ep` |
+| **Get publisher details** | `wevtutil gp "Microsoft-Windows-PowerShell"` |
 
-# -------------------------------
-# Query Events
-# -------------------------------
+---
 
-# Query last 10 events form the Security log in text format
-wevtutil qe Security /c:10 /f:text
+## Query Events
 
-# Query events from a log file (e.g., from an EVTX file)
-wevtutil qe /lf:true "C:\Path\To\YourLog.evtx"
+| Task | Command |
+| :--- | :--- |
+| **Last 10 Security events (text)** | `wevtutil qe Security /c:10 /f:text` |
+| **Query from EVTX file** | `wevtutil qe /lf:true "C:\Path\To\YourLog.evtx"` |
+| **Filter Level 2 (Error) events** | `wevtutil qe Security /q:"*[System[(Level=2)]]" /f:text` |
+| **Last 3 Application events (reverse)** | `wevtutil qe Application /c:3 /rd:true /f:text` |
 
-# Query Security log for only level 2 (error) events using XPath filter
-wevtutil qe Security /q:"*[System[(Level=2)]]" /f:text
+---
 
-# Query last 3 events from Application log, reverse order, in text format
-wevtutil qe Application /c:3 /rd:true /f:text
+## 💡 Tips
 
-
+- `/c:` = Count (number of events)
+- `/f:text` = Output format (text, xml, renderxml)
+- `/rd:true` = Reverse direction (newest first)
+- `/q:` = XPath query filter

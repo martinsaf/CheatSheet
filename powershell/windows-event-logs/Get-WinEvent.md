@@ -1,67 +1,43 @@
-﻿# Get-WinEvent.ps1
-# Useful Get-WinEvent Command Cheat Sheet
-# Source: TryHackMe - Windows Event Logs (Task 4)
-# Description: PowerShell cmdlet to get events from event logs and ETL files on local/remote computers.
+﻿# Get-WinEvent - Command Cheat Sheet 🖥️
 
+PowerShell cmdlet to retrieve events from event logs and ETL files on local/remote computers.
 
-# -------------------------------
-# General Help
-# -------------------------------
-# Official Documentation: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent
-# Show help for the Get-WinEvent cmdlet
-Get-Help Get-WinEvent -Full
+**Documentation:** [Microsoft Docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent)
 
-# -------------------------------
-# List Logs
-# -------------------------------
-# Get all logs from the computer (classic logs first, then new event logs)
-Get-WinEvent -ListLog *
+---
 
+## General Help
 
-# -------------------------------
-# List Providers
-# -------------------------------
-# Get event log providers and their associated logs
-Get-WinEvent -ListProvider *
+| Task | Command |
+| :--- | :--- |
+| **Show full help** | `Get-Help Get-WinEvent -Full` |
 
-# -------------------------------
-# Basic Filtering
-# -------------------------------
-# Filter events in Application log by provider name using Where-Object
-Get-WinEvent -LogName Application | Where-Object { $_.ProviderName -Match 'WLMS' }
+---
 
-# -------------------------------
-# Filtering with Hashtable
-# -------------------------------
-# Same result as above but using FilterHashtable (more efficient for large logs)
-Get-WinEvent -FilterHashtable @{
-  LogName='Application'
-  ProviderName='WLMS'
-}
+## List Logs & Providers
 
-# Filter Application logs for events from MsiInstaller
-Get-WinEvent -FilterHashtable @{
-  LogName='Application'
-  ProviderName='MsiInstaller'
-}
+| Task | Command |
+| :--- | :--- |
+| **List all logs** | `Get-WinEvent -ListLog *` |
+| **List all providers** | `Get-WinEvent -ListProvider *` |
+| **Find PowerShell providers** | `Get-WinEvent -ListProvider * 2>$null \| Where-Object { $_.Name -match 'PowerShell' }` |
+| **Count provider events** | `(Get-WinEvent -ListProvider Microsoft-Windows-PowerShell).Events \| Measure-Object` |
 
-# Filter PowerShell/Operational log for events with ID 4104 containing 'SecureString'
-Get-WinEvent -FilterHashtable @{
-  LogName='Microsoft-Windows-PowerShell/Operational'
-  ID=4104
-} | Select-Object -Property Message | Select-String -Pattern 'SecureString'
+---
 
-# -------------------------------
-# Search Providers
-# -------------------------------
-# Search for all event log providers with "PowerShell" in the name (suppress errors)
-Get-WinEvent -ListProvider * 2>$null |
-    Where-Object { $_.Name -match 'PowerShell' } |
-    Select-Object -ExpandProperty Name
+## Basic Filtering
 
-# It lists all event IDs and descriptions defined by the Microsoft-Windows-PowerShell provider, and then counts the total number of resulting rows.
-(Get-WinEvent -ListProvider Microsoft-Windows-PowerShell).Events |
-    Format-Table Id, Description | Measure-Object
+| Task | Command |
+| :--- | :--- |
+| **Filter by provider (Where-Object)** | `Get-WinEvent -LogName Application \| Where-Object { $_.ProviderName -Match 'WLMS' }` |
+| **Filter by provider (Hashtable)** | `Get-WinEvent -FilterHashtable @{LogName='Application'; ProviderName='WLMS'}` |
+| **Filter MsiInstaller events** | `Get-WinEvent -FilterHashtable @{LogName='Application'; ProviderName='MsiInstaller'}` |
+| **Filter PowerShell ID 4104** | `Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; ID=4104} \| Select-String 'SecureString'` |
 
+---
 
+## 💡 Tips
 
+- **FilterHashtable** is more efficient than `Where-Object` for large logs
+- Use `2>$null` to suppress errors when searching providers
+- Combine with `Select-Object` to extract specific properties
