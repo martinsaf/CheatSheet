@@ -9,20 +9,21 @@
 - `apt update && apt upgrade` — Update system
 - `<command> | ccze -A` — Colorize output
 
-### **Graphical Access to System Files**
-```bash
+### Graphical Access to System Files
+```
 # Open file manager as administrator
 nautilus admin:///path/to/folder
 
 # Practical examples:
 nautilus admin:///etc/apache2
-nautitus admin:///var/www
+nautilus admin:///var/www
 nautilus admin:///etc/ssh
 
-# ⚠️ CAUTION: May cause terminal to hang
+# ⚠️ WARNING: May hang the terminal
 # Solution: run in background
 nautilus admin:///etc/apache2/sites-available &
 ```
+
 ---
 
 # 2. 📑 Journalctl (Systemd Logs)
@@ -31,12 +32,23 @@ nautilus admin:///etc/apache2/sites-available &
 
 - `journalctl` — View all logs
 - `journalctl -u <service>` — Logs for a specific service (e.g., `ssh.service`)
+	- `journalctl -u apache2`
+	- `journalctl -u ssh`
+	- `journalctl -u apache2 -xe`
 - `journalctl -p err..alert` — Filter by severity
 - `journalctl --since "1 hour ago"`
 - `journalctl --since yesterday --until "today 09:00"`
 - `journalctl -f` — Follow logs in real time
 - `journalctl -b` — Logs from the last boot
 - `journalctl /usr/bin/sshd` — Logs from a specific binary
+- `journalctl -xe`
+	- `-x` -> Shows additional explanations (like a translator)
+	- `-e` -> Jumps to the end of the file (the most recent logs)
+- `journalctl -xe | grep -i error`
+	- `-i` -> Ignores case (error, Error, ERROR - all appear)
+- `journalctl -xe | grep -i fail`
+- `journalctl -xe | grep -i warning`
+- `journalctl -xe | grep -i "permission denied"`
 
 ### Format Output
 
@@ -74,10 +86,12 @@ nautilus admin:///etc/apache2/sites-available &
 - `su - name`
 - `id name`
 - `grep name /etc/passwd`
+- `passwd -l name` — Lock account (blocks password login)
+- `passwd -u name` — Unlock account
 
 ### Groups
 
-- `sudo addgroup group`
+- `sudo addgroup <group>`
 - `sudo usermod -aG group name`
 - `groups name`
 
@@ -114,6 +128,11 @@ nautilus admin:///etc/apache2/sites-available &
 - Grant sudo permission: user ALL=(ALL) ALL
 - Restrict commands:
 - `technician ALL=(ALL) /usr/bin/systemctl restart ssh`
+
+### Root Account Management (Lock/Unlock)
+- `sudo passwd -l root` — Lock root account (invalidates password, adds `!` in `/etc/shadow`)
+- `sudo passwd -u root` — Unlock root account (removes `!` from `/etc/shadow`, reactivates password)
+- ⚠️ **Golden Rule**: Never lock the `root` account (`passwd -l`) before testing that your user has 100% `sudo` permissions. If `sudo` fails and `root` is locked, you lose administrator access (except by going to Recovery Mode).
 
 ---
 
@@ -160,7 +179,7 @@ ip route del 192.168.1.0/24
 ip route add default via 192.168.0.1
 ip route get 8.8.8.8
 ```
-#### Persistence (netplan)
+### Persistence (netplan)
 ```text
 routes: 
 	- to: 192.168.1.0/24
@@ -235,15 +254,13 @@ kill -0 <PID>       # Force stop (last resort)
 
 # 4. 🌐 NETWORK VERIFICATION
 ss -tuln            # Open ports (TCP/UDP)
-systemctl ssh state # Critical services
+systemctl status ssh # Critical services
 ```
 Diagnostic Order:
 1. Processes -> 2. Resources -> 3. Network -> 4. Services
 
----
-
 # 16. 🐛 LOGS & DEBUG
-(Complementary to Journactl)
+(Complementary to Journalctl)
 ```bash
 # REAL-TIME LOGS
 sudo tail -f /var/log/syslog   # General logs
@@ -258,9 +275,41 @@ watch -n 2 'ps aux | head -20' # View processes every 2s
 htop                           # Enhanced top (if installed)
 ```
 
+- Shows only lines with "error" - and updates in real time
+	- `tail -f /var/log/syslog | grep -i error`
+
 ---
+
+# 17. 🌐 Networks & Protocols
+
+🔍 DNS & Name Resolution
+- `nslookup rtp.pt` - Find IPs of a domain
+- `cat /etc/resolv.conf` - View configured DNS servers
+- `sudo systemd-resolve --flush-caches` - Clear DNS cache
+
+📊 TCP Sessions & Netstat
+- `netstat -tunap | grep tcp` - View all TCP sessions
+- `ss -tunap` - Modern alternative to netstat
+- `netstat -tunap | grep [IP]` - Filter sessions by specific IP
+
+🎯 TCP Connection States
+- LISTEN: Service listening for new connections
+- ESTABLISHED: Active connection in communication
+- TIME_WAIT: Connection closed, in cleanup period
+- CLOSE_WAIT: Waits for local application to close connection
+
+📊 Session Counting
+- `sudo netstat -tunap | grep -c ESTABLISHED` - Count established sessions
+- `ss -tunap state established | wc -l` - Alternative with ss
+- `netstat -tunap | grep tcp | awk '{print $6}' | sort | uniq -c` - Count by state
+
+📡 Traffic Capture & Analysis
+- `sudo wireshark` - Initialize Wireshark with privileges
+- DNS Filter: `udp.port == 53`
+- General TCP Filter: `tcp && ip.addr == [my_ip]`
+
 # 18. 🖱️ Graphical Interface & Admin
-```bash
+```
 # Graphical administrative access
 nautilus admin:///path
 
@@ -272,4 +321,3 @@ sudo mc                # Midnight Commander (terminal)
 # For hung processes:
 pkill nautilus         # Kill nautilus processes
 ```
-
